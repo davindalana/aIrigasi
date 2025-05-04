@@ -39,7 +39,7 @@ Ikuti langkah-langkah di bawah ini untuk menyiapkan AmbatuGrow di lingkungan lok
 
 1.  **Kloning Repositori:**
     ```bash
-    git clone [https://github.com/davindalana/AmbatuGrow](https://github.com/davindalana/AmbatuGrow)
+    git clone https://github.com/davindalana/AmbatuGrow
     cd AmbatuGrow
     ```
 
