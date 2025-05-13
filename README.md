@@ -1,8 +1,8 @@
-# AmbatuGrow
+# AIrigasi
 
-![AmbatuGrow Logo](link_logo_anda_disini)
+![AIrigasi Logo](link_logo_anda_disini)
 
-AmbatuGrow adalah aplikasi web inovatif yang memanfaatkan kekuatan *machine learning* (ML) untuk memberikan prediksi cerdas mengenai kebutuhan penyiraman tanaman. Dengan menganalisis data kondisi tanah secara *real-time* seperti kelembaban, suhu, dan pH, AmbatuGrow memberdayakan petani dan penghobi tanaman untuk merawat tanaman mereka secara otomatis dan efisien, tanpa memerlukan perangkat keras tambahan yang rumit.
+AIrigasi adalah aplikasi web inovatif yang memanfaatkan kekuatan *machine learning* (ML) untuk memberikan prediksi cerdas mengenai kebutuhan penyiraman tanaman. Dengan menganalisis data kondisi tanah secara *real-time* seperti kelembaban, suhu, dan pH, AIrigasi memberdayakan petani dan penghobi tanaman untuk merawat tanaman mereka secara otomatis dan efisien, tanpa memerlukan perangkat keras tambahan yang rumit.
 
 ## ✨ Fitur Utama
 
@@ -35,46 +35,47 @@ AmbatuGrow adalah aplikasi web inovatif yang memanfaatkan kekuatan *machine lear
 
 ## ⚙️ Instalasi
 
-Ikuti langkah-langkah di bawah ini untuk menyiapkan AmbatuGrow di lingkungan lokal Anda:
+Ikuti langkah-langkah di bawah ini untuk menyiapkan AIrigasi di lingkungan lokal Anda:
 
 1.  **Kloning Repositori:**
     ```bash
-    git clone https://github.com/davindalana/AmbatuGrow
-    cd AmbatuGrow
+    git clone https://github.com/davindalana/AIrigasi
+    cd AIrigasi
     ```
 
 2.  **Instalasi Dependensi:**
 
     * **Frontend:**
         ```bash
-        cd frontend
+        cd src/client
         npm install
         ```
 
     * **Backend:**
         ```bash
-        cd backend
+        cd src/server
         npm install
         ```
 
     * **Machine Learning:**
         Pastikan Anda telah menginstal Python 3.x dan kemudian instal dependensi yang diperlukan:
         ```bash
-        pip install -r requirements.txt
+        cd src/ml
+        pip install -r ../../requirements.txt
         ```
 
 ## 🚀 Menjalankan Proyek
 
 1.  **Menjalankan Frontend:**
     ```bash
-    cd frontend
+    cd src/client
     npm start
     ```
     Aplikasi frontend akan berjalan di `http://localhost:3000`.
 
 2.  **Menjalankan Backend:**
     ```bash
-    cd backend
+    cd src/server
     npm start
     ```
     Server backend akan berjalan di `http://localhost:5000`.
@@ -82,7 +83,7 @@ Ikuti langkah-langkah di bawah ini untuk menyiapkan AmbatuGrow di lingkungan lok
 3.  **Menjalankan Model AI:**
     Model AI akan dijalankan oleh server backend saat data baru diterima. Untuk melatih model dengan dataset awal atau memperbarui model, jalankan:
     ```bash
-    cd ml
+    cd src/ml
     python train_model.py
     ```
     Ini akan melatih model *machine learning* menggunakan dataset yang tersedia dan menyimpan model yang telah dilatih untuk digunakan oleh backend.
@@ -115,4 +116,4 @@ Ikuti langkah-langkah di bawah ini untuk menyiapkan AmbatuGrow di lingkungan lok
 
 Jika Anda memiliki pertanyaan, saran, atau umpan balik, jangan ragu untuk menghubungi kami melalui email: [email@example.com](mailto:email@example.com).
 
-Terima kasih telah menggunakan **AmbatuGrow**! Kami berharap aplikasi ini dapat membantu Anda merawat tanaman dengan lebih cerdas dan efisien. Selamat berkebun! 🪴
+Terima kasih telah menggunakan **AIrigasi**! Kami berharap aplikasi ini dapat membantu Anda merawat tanaman dengan lebih cerdas dan efisien. Selamat berkebun! 🪴

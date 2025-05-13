@@ -1,20 +1,20 @@
 {
-  "name": "ambatugrow",
+  "name": "airigasi",
   "version": "1.0.0",
-  "description": "![AmbatuGrow Logo](link_logo_anda_disini)",
+  "description": "![aIrigasi Logo](link_logo_anda_disini)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davindalana/AmbatuGrow.git"
+    "url": "git+https://github.com/davindalana/aIrigasi.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/davindalana/AmbatuGrow/issues"
+    "url": "https://github.com/davindalana/aIrigasi/issues"
   },
-  "homepage": "https://github.com/davindalana/AmbatuGrow#readme"
+  "homepage": "https://github.com/davindalana/aIrigasi#readme"
 }
