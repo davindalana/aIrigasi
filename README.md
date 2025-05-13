@@ -47,20 +47,20 @@ Ikuti langkah-langkah di bawah ini untuk menyiapkan AIrigasi di lingkungan lokal
 
     * **Frontend:**
         ```bash
-        cd src/client
+        cd client
         npm install
         ```
 
     * **Backend:**
         ```bash
-        cd src/server
+        cd server
         npm install
         ```
 
     * **Machine Learning:**
         Pastikan Anda telah menginstal Python 3.x dan kemudian instal dependensi yang diperlukan:
         ```bash
-        cd src/ml
+        cd ml
         pip install -r ../../requirements.txt
         ```
 
@@ -68,14 +68,14 @@ Ikuti langkah-langkah di bawah ini untuk menyiapkan AIrigasi di lingkungan lokal
 
 1.  **Menjalankan Frontend:**
     ```bash
-    cd src/client
+    cd client
     npm start
     ```
     Aplikasi frontend akan berjalan di `http://localhost:3000`.
 
 2.  **Menjalankan Backend:**
     ```bash
-    cd src/server
+    cd server
     npm start
     ```
     Server backend akan berjalan di `http://localhost:5000`.
@@ -83,7 +83,7 @@ Ikuti langkah-langkah di bawah ini untuk menyiapkan AIrigasi di lingkungan lokal
 3.  **Menjalankan Model AI:**
     Model AI akan dijalankan oleh server backend saat data baru diterima. Untuk melatih model dengan dataset awal atau memperbarui model, jalankan:
     ```bash
-    cd src/ml
+    cd ml
     python train_model.py
     ```
     Ini akan melatih model *machine learning* menggunakan dataset yang tersedia dan menyimpan model yang telah dilatih untuk digunakan oleh backend.
