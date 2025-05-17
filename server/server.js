@@ -1,35 +1,44 @@
+// server.js - File utama untuk menjalankan server backend AIrigasi
+
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 const morgan = require('morgan');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
 
+// Load environment variables
+dotenv.config();
+
+// Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 5000;
+
+// Connect to Database
+connectDB();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Routes
-app.use('/api/plants', require('./routes/plantRoutes'));
-app.use('/api/predictions', require('./routes/predictionRoutes'));
+// Define Routes
+app.use('/api/sensor', require('./routes/sensorRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
-// Default route
+// Basic route for testing
 app.get('/', (req, res) => {
-    res.send('Welcome to AIrigasi API');
+    res.json({ message: 'Selamat datang di API AIrigasi!' });
 });
 
-// MongoDB Connection
-mongoose
-    .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/airigasi')
-    .then(() => {
-        console.log('MongoDB connected successfully');
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
-    })
-    .catch((err) => {
-        console.error('MongoDB connection error:', err);
-    });
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send({ message: 'Terjadi kesalahan pada server!' });
+});
+
+// Define PORT
+const PORT = process.env.PORT || 5000;
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+});
