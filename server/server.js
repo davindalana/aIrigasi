@@ -1,35 +1,33 @@
+require('dotenv').config();
+const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
-const morgan = require('morgan');
-require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(morgan('dev'));
 
-// Routes
-app.use('/api/plants', require('./routes/plantRoutes'));
-app.use('/api/predictions', require('./routes/predictionRoutes'));
-
-// Default route
-app.get('/', (req, res) => {
-    res.send('Welcome to AIrigasi API');
+// Logging middleware (opsional)
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
 });
 
-// MongoDB Connection
-mongoose
-    .connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/airigasi')
-    .then(() => {
-        console.log('MongoDB connected successfully');
-        app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT}`);
-        });
-    })
-    .catch((err) => {
-        console.error('MongoDB connection error:', err);
-    });
+// Routes
+const sensorRoutes = require('./routes/sensorData');
+app.use('/api/sensor', sensorRoutes);
+
+// MongoDB Connect
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch(err => console.error('❌ MongoDB Connection Error:', err));
+
+// Error handling (opsional tapi bagus)
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
