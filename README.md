@@ -9,7 +9,7 @@ AIrigasi adalah aplikasi web inovatif yang memanfaatkan kekuatan *machine learni
 * **💧 Prediksi Penyiraman Cerdas:** Algoritma *machine learning* yang canggih menganalisis data kelembaban tanah untuk menentukan secara akurat apakah tanaman memerlukan penyiraman.
 * **📊 Dashboard Interaktif:** Visualisasikan status penting tanaman Anda, termasuk kelembaban tanah, suhu, pH, dan prediksi penyiraman melalui grafik yang intuitif dan mudah dipahami.
 * **🕰️ Data Historis Komprehensif:** Akses dan analisis data historis kelembaban tanah dan hasil prediksi untuk mendapatkan wawasan yang lebih mendalam tentang tren dan kebutuhan tanaman Anda dari waktu ke waktu.
-* **🔔 Notifikasi Cerdas:** Terima pemberitahuan tepat waktu ketika tanah tanaman Anda mencapai ambang batas penyiraman yang ditentukan oleh model, memastikan tanaman Anda selalu mendapatkan perawatan yang optimal.
+* **🔔 Koneksi Perangkat & Akuisisi Data Otomatis:** AIrigasi dirancang untuk dapat terhubung langsung dengan perangkat sensor Anda (misalnya, menggunakan ESP32 dengan sensor kelembaban tanah, suhu, dan pH). Sistem akan secara otomatis menerima data kondisi tanah secara real-time dari perangkat tersebut.
 
 ## 🛠️ Teknologi yang Digunakan
 
