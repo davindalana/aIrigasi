@@ -1,38 +1,27 @@
 const SensorData = require('../models/SensorData');
-const { predictNeedWatering } = require('../../ml/predict');
+const { addToBuffer } = require('./sensorBatchController');
 
-exports.addSensorData = async (req, res) => {
+exports.addSensorData = async (request, h) => {
     try {
-        const { soilMoisture, airTemperature, humidity } = req.body;
+        const { suhu, kelembapan, phTanah, curahHujan } = request.payload;
 
-        // Simple prediction logic kalau belum ada ML
-        const predicted = predictNeedWatering(soilMoisture, airTemperature, humidity);
-        const motorStatus = predicted ? 'ON' : 'OFF';
+        // Simpan ke buffer, bukan langsung ke MongoDB
+        addToBuffer({ suhu, kelembapan, phTanah, curahHujan });
+        console.log('📥 Data diterima dan dimasukkan ke buffer:', request.payload);
 
-        const newData = new SensorData({
-            soilMoisture,
-            airTemperature,
-            humidity,
-            predictedNeedWatering: predicted,
-            motorStatus
-        });
-
-        await newData.save();
-        console.log('Input:', soilMoisture, airTemperature, humidity);
-        console.log('Predicted:', predicted);
-        res.status(200).json({ message: 'Sensor data saved', data: newData });
+        return h.response({ message: 'Data sensor diterima dan akan diproses dalam batch 1 jam' }).code(200);
 
     } catch (err) {
-        console.error('❌ Error saving data:', err);
-        res.status(500).json({ error: err.message });
+        console.error('❌ Error menerima data sensor:', err);
+        return h.response({ error: err.message }).code(500);
     }
 };
 
-exports.getAllSensorData = async (req, res) => {
+exports.getAllSensorData = async (request, h) => {
     try {
         const allData = await SensorData.find().sort({ createdAt: -1 });
-        res.json(allData);
+        return h.response(allData).code(200);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return h.response({ error: err.message }).code(500);
     }
 };
