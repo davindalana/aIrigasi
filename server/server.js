@@ -5,7 +5,9 @@ const sensorRoutes = require('./routes/sensorData');
 const cron = require('node-cron');
 const axios = require('axios');
 const { getAndClearBuffer } = require('./controllers/sensorBatchController');
-const SensorData = require('./models/SensorData');
+
+const RealTimeData = require('./models/RealTimeData');
+const BatchData = require('./models/BatchData');
 
 const init = async () => {
   const server = Hapi.server({
@@ -87,7 +89,7 @@ const init = async () => {
 
       const perluSiram = res.data.perlu_siram;
 
-      await SensorData.create({
+      await BatchData.create({
         suhu: features[0],
         kelembapan: features[1],
         phTanah: features[2],
