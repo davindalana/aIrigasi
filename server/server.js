@@ -1,62 +1,65 @@
-// server.js
 const Hapi = require('@hapi/hapi');
-const database = require('./config/database');
-const serverConfig = require('./config/server');
-const registerRoutes = require('./routes');
-const logger = require('./utils/logger');
-
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const init = async () => {
-    try {
-        // Koneksi ke database
-        const db = await database.connect();
-        
-        // Inisialisasi server
-        const server = Hapi.server(serverConfig);
-
-        // Register routes
-        await registerRoutes(server, db);
-
-        // Error handling
-        server.ext('onPreResponse', (request, h) => {
-            const response = request.response;
-            
-            if (response.isBoom) {
-                logger.error('Server error', {
-                    error: response.message,
-                    stack: response.stack,
-                    path: request.path,
-                    method: request.method
-                });
+    // Inisialisasi server Hapi
+    const server = Hapi.server({
+        port: process.env.PORT || 3000,
+        host: process.env.HOST || 'localhost',
+        routes: {
+            cors: {
+                origin: ['*'], // Untuk development, production harus lebih specific
+                headers: ['Accept', 'Authorization', 'Content-Type', 'If-None-Match'],
+                credentials: true
             }
-            
-            return h.continue;
+        }
+    });
+
+    // Koneksi ke MongoDB
+    try {
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/irrigation_db', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
         });
-
-        // Start server
-        await server.start();
-        logger.info(`🚀 Server running on ${server.info.uri}`);
-        
-        return server;
-
+        console.log('Connected to MongoDB');
     } catch (error) {
-        logger.error('Failed to start server', error);
+        console.error('MongoDB connection error:', error);
         process.exit(1);
     }
+
+    // Register routes
+    await server.register([
+        {
+            plugin: require('./routes/sensorRoutes'),
+            options: {}
+        },
+        {
+            plugin: require('./routes/predictionRoutes'),
+            options: {}
+        }
+    ]);
+
+    // Health check route
+    server.route({
+        method: 'GET',
+        path: '/',
+        handler: (request, h) => {
+            return {
+                message: 'Irrigation System API',
+                status: 'running',
+                timestamp: new Date().toISOString()
+            };
+        }
+    });
+
+    await server.start();
+    console.log(`Server running on ${server.info.uri}`);
 };
 
-// Handle process termination
 process.on('unhandledRejection', (err) => {
-    logger.error('Unhandled rejection', err);
+    console.log(err);
     process.exit(1);
 });
 
-process.on('SIGTERM', async () => {
-    logger.info('SIGTERM received, shutting down gracefully');
-    await database.close();
-    process.exit(0);
-});
-
-// Start server
 init();
