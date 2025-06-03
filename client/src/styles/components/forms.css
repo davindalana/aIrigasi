@@ -1,0 +1,135 @@
+/* Forms - Input Fields, Selectors, and Form Controls */
+
+/* Sensor Input Fields */
+.sensor-input {
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sensor-input:focus {
+  outline: none;
+  border-color: #4caf50;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* Input Groups */
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.5rem;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+}
+
+/* Time Range Selector */
+.time-range-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.time-range-selector label {
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.time-range-select {
+  padding: 8px 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.time-range-select:hover,
+.time-range-select:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Date Range Selector */
+.date-range-selector {
+  position: relative;
+}
+
+.date-select {
+  padding: 0.75rem 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.date-select:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.date-select option {
+  background: #667eea;
+  color: white;
+}
+
+/* Sensor Input Grid */
+.sensor-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Desktop specific grid */
+@media (min-width: 1024px) {
+  .sensor-inputs {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Tablet specific grid */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sensor-inputs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile responsive forms */
+@media (max-width: 768px) {
+  .sensor-inputs {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sensor-inputs {
+    gap: 0.5rem;
+  }
+}
+
+/* Large desktop optimizations */
+@media (min-width: 1400px) {
+  .sensor-inputs {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}

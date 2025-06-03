@@ -1,0 +1,468 @@
+/* Dashboard Template Styles - Full Screen Responsive */
+.dashboard {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 1rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Container for desktop layout */
+@media (min-width: 1024px) {
+  .dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.dashboard-header h2 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.dashboard-header p {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Sensor Input Card */
+.sensor-input-card {
+  border-left: 4px solid #4caf50;
+  margin-bottom: 2rem;
+}
+
+.sensor-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Desktop specific grid */
+@media (min-width: 1024px) {
+  .sensor-inputs {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Tablet specific grid */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sensor-inputs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.5rem;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+}
+
+.sensor-input {
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+  background: #fafafa;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sensor-input:focus {
+  outline: none;
+  border-color: #4caf50;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.analyze-btn {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.analyze-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.analyze-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.analyze-btn.loading {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* AI Decision Card */
+.ai-decision-card {
+  border-left: 4px solid #2196f3;
+  background: linear-gradient(135deg, #f8f9ff, #ffffff);
+  margin-bottom: 2rem;
+}
+
+.decision-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.decision-icon {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  background: #2196f3;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+
+.decision-content {
+  flex: 1;
+  min-width: 200px;
+}
+
+.decision-text {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.decision-text.no-water {
+  color: #ff9800;
+}
+
+.decision-text.water-needed {
+  color: #4caf50;
+}
+
+.decision-subtitle {
+  color: #666;
+  margin: 0.25rem 0 0 0;
+  font-weight: 500;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+}
+
+.confidence-badge {
+  text-align: right;
+  min-width: 120px;
+}
+
+.confidence-label {
+  display: block;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.confidence-value {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 700;
+  color: #333;
+}
+
+.confidence-bar {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.confidence-fill {
+  height: 100%;
+  transition: width 0.5s ease;
+  border-radius: 4px;
+}
+
+.confidence-bar.orange .confidence-fill {
+  background: linear-gradient(90deg, #ff9800, #f57c00);
+}
+
+.confidence-bar.green .confidence-fill {
+  background: linear-gradient(90deg, #4caf50, #45a049);
+}
+
+/* Sensor Display Grid */
+.sensor-display {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Desktop specific sensor grid */
+@media (min-width: 1024px) {
+  .sensor-display {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Tablet specific sensor grid */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sensor-display {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.sensor-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+  transition: transform 0.3s ease;
+}
+
+.sensor-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.sensor-card h4 {
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.sensor-value {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.sensor-unit {
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  color: #888;
+  font-weight: 500;
+}
+
+/* Weather Card */
+.weather-card {
+  border-left: 4px solid #03a9f4;
+  background: linear-gradient(135deg, #e3f2fd, #ffffff);
+  margin-bottom: 2rem;
+}
+
+.weather-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Desktop weather grid */
+@media (min-width: 1024px) {
+  .weather-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.weather-item {
+  background: rgba(3, 169, 244, 0.1);
+  padding: 1.5rem 1rem;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid rgba(3, 169, 244, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.weather-item:hover {
+  transform: translateY(-2px);
+}
+
+.weather-label {
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  color: #0277bd;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.weather-value {
+  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+  font-weight: 700;
+  color: #01579b;
+}
+
+/* Explanation Card */
+.explanation-card {
+  border-left: 4px solid #9c27b0;
+  background: linear-gradient(135deg, #f3e5f5, #ffffff);
+  margin-bottom: 2rem;
+}
+
+.explanation-text {
+  color: #555;
+  line-height: 1.6;
+  font-size: clamp(0.9rem, 2vw, 1rem);
+  margin: 0;
+}
+
+/* Card base styles */
+.sensor-input-card,
+.ai-decision-card,
+.weather-card,
+.explanation-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+
+  .dashboard-header {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .sensor-inputs {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .sensor-display {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .weather-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .decision-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .confidence-badge {
+    text-align: center;
+  }
+
+  .sensor-input-card,
+  .ai-decision-card,
+  .weather-card,
+  .explanation-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 0.5rem;
+  }
+
+  .sensor-display {
+    grid-template-columns: 1fr;
+  }
+
+  .weather-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sensor-inputs {
+    gap: 0.5rem;
+  }
+
+  .sensor-input-card,
+  .ai-decision-card,
+  .weather-card,
+  .explanation-card {
+    padding: 1rem;
+  }
+}
+
+/* Large desktop optimizations */
+@media (min-width: 1400px) {
+  .dashboard {
+    max-width: 1600px;
+  }
+
+  .sensor-inputs {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .sensor-display {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .weather-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Ultra-wide screen support */
+@media (min-width: 1800px) {
+  .dashboard {
+    max-width: 1800px;
+  }
+}
