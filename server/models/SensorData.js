@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const sensorDataSchema = new mongoose.Schema({
-    timeStamp: Date,
+    timeStamp: { type: Date, default: Date.now },
     airHumidity: Number,
     temperature: Number,
     soilMoisture: Number,
