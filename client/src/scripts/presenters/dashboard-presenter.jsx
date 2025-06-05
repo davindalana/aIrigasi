@@ -79,6 +79,32 @@ class DashboardPresenter {
     });
   }
 
+  // --- Start: Penambahan Kode untuk Pump Status ---
+  async getPumpStatus(sensorData) {
+    //
+    // Simulasikan logika status pompa berdasarkan data sensor
+    // Jika kelembaban sangat rendah, pompa ON. Jika tidak, bisa OFF atau ON secara acak untuk demo.
+    return new Promise((resolve) => {
+      //
+      setTimeout(() => {
+        //
+        const { soilMoisture } = sensorData; //
+        let status = "OFF"; //
+
+        if (soilMoisture < 250) {
+          // Jika tanah sangat kering, pompa ON
+          status = "ON"; //
+        } else if (soilMoisture < 350 && Math.random() > 0.5) {
+          // Jika kering sedang, ada kemungkinan ON
+          status = "ON"; //
+        }
+
+        resolve({ status }); //
+      }, 300); // Penundaan simulasi
+    }); //
+  }
+  // --- End: Penambahan Kode untuk Pump Status ---
+
   validateSensorData(sensorData) {
     const errors = [];
 

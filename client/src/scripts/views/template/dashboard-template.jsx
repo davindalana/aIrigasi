@@ -10,10 +10,14 @@ const DashboardTemplate = ({
   sensorData,
   weatherData,
   aiDecision,
+  pumpStatus, // --- Terima pumpStatus sebagai prop
   isLoading,
   onSensorChange,
   onAnalyze,
 }) => {
+  const pumpStatusClass = pumpStatus === "ON" ? "pump-on" : "pump-off"; //
+  const pumpStatusText = pumpStatus === "ON" ? "Pump ON" : "Pump OFF"; //
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -111,6 +115,17 @@ const DashboardTemplate = ({
       </div>
 
       <div className="sensor-display">
+        {/* --- Start: Tambahkan Card Indikator Pompa --- */}
+        <div className={`sensor-card ${pumpStatusClass}`}>
+          <h4>WATER PUMP</h4>
+          <div className="sensor-value">
+            <span className={`pump-status-dot ${pumpStatusClass}`}></span>{" "}
+            {pumpStatusText}
+          </div>
+          <div className="sensor-unit">Status</div>
+        </div>
+        {/* --- End: Tambahkan Card Indikator Pompa --- */}
+
         <div className="sensor-card">
           <h4>SOIL MOISTURE</h4>
           <div className="sensor-value">{sensorData.soilMoisture}</div>

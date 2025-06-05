@@ -1,5 +1,5 @@
 // src/scripts/views/template/analysis-template.jsx
-import React from "react";
+import React, { useEffect, useRef } from "react"; // Tambahkan useRef
 import "../../../styles/pages/analysis.css";
 import "../../../styles/components/cards.css";
 import "../../../styles/components/forms.css";
@@ -7,6 +7,25 @@ import "../../../styles/components/charts.css";
 import "../../../styles/components/tables.css";
 import "../../../styles/components/buttons.css";
 import "../../../styles/components/loading.css";
+import {
+  Chart, // Impor Chart
+  LineElement, // Impor LineElement
+  CategoryScale, // Impor CategoryScale (untuk sumbu x)
+  LinearScale, // Impor LinearScale (untuk sumbu y)
+  PointElement, // Impor PointElement
+  Tooltip, // Impor Tooltip
+  Legend, // Impor Legend
+} from "chart.js/auto"; // Impor semua yang dibutuhkan dari chart.js/auto
+
+// Daftarkan komponen Chart.js
+Chart.register(
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend
+);
 
 const AnalysisTemplate = ({
   historicalData,
@@ -17,6 +36,254 @@ const AnalysisTemplate = ({
   onTimeRangeChange,
   onExportData,
 }) => {
+  // Buat referensi untuk setiap canvas grafik
+  const moistureChartRef = useRef(null);
+  const temperatureChartRef = useRef(null);
+  const humidityChartRef = useRef(null);
+  const wateringChartRef = useRef(null);
+
+  // Fungsi untuk membersihkan grafik sebelumnya
+  const destroyChart = (chartRef) => {
+    if (chartRef.current) {
+      chartRef.current.destroy();
+      chartRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    // Pastikan data ada dan tidak sedang loading sebelum menggambar grafik
+    if (historicalData && historicalData.length > 0 && !isLoading) {
+      // Hancurkan grafik yang ada sebelum menggambar yang baru
+      destroyChart(moistureChartRef);
+      destroyChart(temperatureChartRef);
+      destroyChart(humidityChartRef);
+      destroyChart(wateringChartRef);
+
+      const dates = historicalData.map((data) =>
+        new Date(data.date).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+        })
+      );
+
+      // Grafik Kelembaban Tanah
+      const moistureCtx = document.getElementById("moistureChart");
+      if (moistureCtx) {
+        moistureChartRef.current = new Chart(moistureCtx, {
+          type: "line",
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: "Soil Moisture",
+                data: historicalData.map((data) => data.soilMoisture),
+                borderColor: "#4caf50",
+                backgroundColor: "rgba(76, 175, 80, 0.2)",
+                tension: 0.3,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Moisture Units (0-1023)",
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Date",
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return `Moisture: ${context.raw} units`;
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // Grafik Suhu
+      const temperatureCtx = document.getElementById("temperatureChart");
+      if (temperatureCtx) {
+        temperatureChartRef.current = new Chart(temperatureCtx, {
+          type: "line",
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: "Temperature",
+                data: historicalData.map((data) => data.temperature),
+                borderColor: "#ff9800",
+                backgroundColor: "rgba(255, 152, 0, 0.2)",
+                tension: 0.3,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: false,
+                title: {
+                  display: true,
+                  text: "Temperature (°C)",
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Date",
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return `Temperature: ${context.raw}°C`;
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // Grafik Kelembaban Udara
+      const humidityCtx = document.getElementById("humidityChart");
+      if (humidityCtx) {
+        humidityChartRef.current = new Chart(humidityCtx, {
+          type: "line",
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: "Air Humidity",
+                data: historicalData.map((data) => data.humidity),
+                borderColor: "#2196f3",
+                backgroundColor: "rgba(33, 150, 243, 0.2)",
+                tension: 0.3,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Humidity (%)",
+                },
+                max: 100,
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Date",
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return `Humidity: ${context.raw}%`;
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // Grafik Status Penyiraman
+      const wateringCtx = document.getElementById("wateringChart");
+      if (wateringCtx) {
+        wateringChartRef.current = new Chart(wateringCtx, {
+          type: "line",
+          data: {
+            labels: dates,
+            datasets: [
+              {
+                label: "Watering Needed",
+                data: historicalData.map((data) =>
+                  data.recommendation === "WATERING NEEDED" ? 1 : 0
+                ),
+                borderColor: "#9c27b0",
+                backgroundColor: "rgba(156, 39, 176, 0.2)",
+                tension: 0.3,
+                stepSize: 1, // Untuk tampilan biner
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 1.1, // Agar 1.0 terlihat jelas
+                ticks: {
+                  callback: function (value) {
+                    return value === 1 ? "Needed" : "Not Needed";
+                  },
+                  stepSize: 1,
+                },
+                title: {
+                  display: true,
+                  text: "Watering Status",
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Date",
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return `Watering: ${
+                      context.raw === 1 ? "Needed" : "Not Needed"
+                    }`;
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+    }
+
+    // Fungsi cleanup untuk menghancurkan grafik saat komponen di-unmount
+    return () => {
+      destroyChart(moistureChartRef);
+      destroyChart(temperatureChartRef);
+      destroyChart(humidityChartRef);
+      destroyChart(wateringChartRef);
+    };
+  }, [historicalData, isLoading, selectedTimeRange]); // Tambahkan selectedTimeRange sebagai dependensi
+
   const getTimeRangeLabel = (range) => {
     switch (range) {
       case "7days":
@@ -141,24 +408,39 @@ const AnalysisTemplate = ({
           <div className="chart-container">
             <div className="chart-placeholder">
               <h3>Soil Moisture Over Time</h3>
-              <div className="simple-chart">
-                {historicalData.slice(-7).map((data, index) => (
-                  <div key={index} className="chart-bar">
-                    <div
-                      className="bar"
-                      style={{
-                        height: `${(data.soilMoisture / 800) * 100}%`,
-                        backgroundColor:
-                          data.soilMoisture < 300
-                            ? "#ff6b6b"
-                            : data.soilMoisture > 600
-                            ? "#4ecdc4"
-                            : "#51cf66",
-                      }}
-                    ></div>
-                    <span className="bar-label">{data.date.slice(-2)}</span>
-                  </div>
-                ))}
+              <div className="chart-wrapper">
+                {/* Canvas untuk grafik kelembaban tanah */}
+                <canvas id="moistureChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          {/* Grafik Suhu */}
+          <div className="chart-container">
+            <div className="chart-placeholder">
+              <h3>Temperature Over Time</h3>
+              <div className="chart-wrapper">
+                <canvas id="temperatureChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          {/* Grafik Kelembaban Udara */}
+          <div className="chart-container">
+            <div className="chart-placeholder">
+              <h3>Air Humidity Over Time</h3>
+              <div className="chart-wrapper">
+                <canvas id="humidityChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          {/* Grafik Status Penyiraman */}
+          <div className="chart-container">
+            <div className="chart-placeholder">
+              <h3>Daily Watering Status</h3>
+              <div className="chart-wrapper">
+                <canvas id="wateringChart"></canvas>
               </div>
             </div>
           </div>
