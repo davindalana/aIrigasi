@@ -135,6 +135,17 @@
 }
 
 /* Performance Circles */
+.performance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+}
+
+.performance-item {
+  display: flex;
+  justify-content: center;
+}
+
 .performance-circle {
   width: 120px;
   height: 120px;

@@ -1,4 +1,12 @@
+// src/scripts/views/template/analysis-template.jsx
 import React from "react";
+import "../../../styles/pages/analysis.css";
+import "../../../styles/components/cards.css";
+import "../../../styles/components/forms.css";
+import "../../../styles/components/charts.css";
+import "../../../styles/components/tables.css";
+import "../../../styles/components/buttons.css";
+import "../../../styles/components/loading.css";
 
 const AnalysisTemplate = ({
   historicalData,

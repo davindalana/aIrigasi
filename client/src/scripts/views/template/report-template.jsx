@@ -1,5 +1,13 @@
+// src/scripts/views/template/report-template.jsx
 import React from "react";
 import "../../../styles/pages/report.css";
+import "../../../styles/components/buttons.css";
+import "../../../styles/components/cards.css";
+import "../../../styles/components/charts.css";
+import "../../../styles/components/navigation.css";
+import "../../../styles/components/tables.css";
+import "../../../styles/components/timeline.css";
+import "../../../styles/components/loading.css";
 
 const ReportTemplate = ({
   reportData,
@@ -33,7 +41,6 @@ const ReportTemplate = ({
 
   return (
     <div className="report-container">
-      {/* Header */}
       <div className="report-header">
         <div className="header-content">
           <div className="header-title">
@@ -57,7 +64,6 @@ const ReportTemplate = ({
         </div>
       </div>
 
-      {/* Navigation */}
       <div className="report-nav">
         <button
           className={`nav-tab ${activeTab === "summary" ? "active" : ""}`}
@@ -79,7 +85,6 @@ const ReportTemplate = ({
         </button>
       </div>
 
-      {/* Content */}
       <div className="report-content">
         {activeTab === "summary" && <SummaryTab data={reportData.summary} />}
         {activeTab === "analytics" && (
@@ -91,10 +96,8 @@ const ReportTemplate = ({
   );
 };
 
-// Summary Tab Component
 const SummaryTab = ({ data }) => (
   <div className="summary-tab">
-    {/* Key Metrics */}
     <div className="metrics-grid">
       <div className="metric-card">
         <div className="metric-icon">🔍</div>
@@ -129,7 +132,6 @@ const SummaryTab = ({ data }) => (
       </div>
     </div>
 
-    {/* Current Conditions */}
     <div className="card">
       <div className="card-header">
         <span>🌡️ Current Conditions</span>
@@ -159,7 +161,6 @@ const SummaryTab = ({ data }) => (
       </div>
     </div>
 
-    {/* System Status */}
     <div className="card">
       <div className="card-header">
         <span>⚙️ System Status</span>
@@ -188,10 +189,8 @@ const SummaryTab = ({ data }) => (
   </div>
 );
 
-// Analytics Tab Component
 const AnalyticsTab = ({ data }) => (
   <div className="analytics-tab">
-    {/* Daily Trends Chart */}
     <div className="card">
       <div className="card-header">
         <span>📈 Daily Trends</span>
@@ -211,7 +210,6 @@ const AnalyticsTab = ({ data }) => (
       </div>
     </div>
 
-    {/* Distribution Cards */}
     <div className="distribution-grid">
       <div className="card">
         <div className="card-header">
@@ -292,7 +290,6 @@ const AnalyticsTab = ({ data }) => (
   </div>
 );
 
-// History Tab Component
 const HistoryTab = ({ data }) => (
   <div className="history-tab">
     <div className="card">

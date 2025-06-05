@@ -1,5 +1,17 @@
+// src/App.jsx
 import React, { useState } from "react";
-import "../src/styles/App.css";
+import "./styles/App.css";
+import "./styles/pages/dashboard.css";
+import "./styles/pages/analysis.css";
+import "./styles/pages/report.css";
+import "./styles/components/buttons.css";
+import "./styles/components/cards.css";
+import "./styles/components/charts.css";
+import "./styles/components/forms.css";
+import "./styles/components/loading.css";
+import "./styles/components/navigation.css";
+import "./styles/components/tables.css";
+import "./styles/components/timeline.css";
 import DashboardPage from "./scripts/views/pages/dashboard-page";
 import AnalysisPage from "./scripts/views/pages/analysis-page";
 import ReportPage from "./scripts/views/pages/report-page";
@@ -22,12 +34,16 @@ function App() {
 
   return (
     <div className="App">
-      {/* App Bar */}
       <header className="app-bar">
         <div className="app-bar-content">
           <div className="app-title">
-            <span className="app-icon">🌱</span>
-            <h1>Smart Irrigation System</h1>
+            <img
+              src="Logo.svg"
+              alt="AIrigasi Logo"
+              className="app-icon"
+              width="60px"
+            />
+            <h1>AIrigasi</h1>
           </div>
           <nav className="app-nav">
             <button
@@ -58,7 +74,6 @@ function App() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="main-content">{renderContent()}</main>
     </div>
   );

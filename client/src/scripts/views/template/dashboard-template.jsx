@@ -1,5 +1,10 @@
+// src/scripts/views/template/dashboard-template.jsx
 import React from "react";
 import "../../../styles/pages/dashboard.css";
+import "../../../styles/components/cards.css";
+import "../../../styles/components/forms.css";
+import "../../../styles/components/buttons.css";
+import "../../../styles/components/charts.css";
 
 const DashboardTemplate = ({
   sensorData,
@@ -11,13 +16,11 @@ const DashboardTemplate = ({
 }) => {
   return (
     <div className="dashboard">
-      {/* Header */}
       <div className="dashboard-header">
-        <h2>🌱 Smart Irrigation System</h2>
+        <h2>AIrigasi</h2>
         <p>AI-Powered Plant Watering Decision System</p>
       </div>
 
-      {/* Sensor Data Input */}
       <div className="card sensor-input-card">
         <div className="card-header">
           📊 <span>Sensor Data Input</span>
@@ -74,7 +77,6 @@ const DashboardTemplate = ({
         </button>
       </div>
 
-      {/* AI Decision */}
       <div className="card ai-decision-card">
         <div className="decision-header">
           <div className="decision-icon">⏸️</div>
@@ -108,7 +110,6 @@ const DashboardTemplate = ({
         </div>
       </div>
 
-      {/* Sensor Data Display */}
       <div className="sensor-display">
         <div className="sensor-card">
           <h4>SOIL MOISTURE</h4>
@@ -135,7 +136,6 @@ const DashboardTemplate = ({
         </div>
       </div>
 
-      {/* Weather Conditions */}
       <div className="card weather-card">
         <div className="card-header">
           🌤️ <span>Weather Conditions</span>
@@ -164,7 +164,6 @@ const DashboardTemplate = ({
         </div>
       </div>
 
-      {/* AI Decision Explanation */}
       <div className="card explanation-card">
         <div className="card-header">
           🧠 <span>AI Decision Explanation</span>

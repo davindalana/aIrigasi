@@ -28,7 +28,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Remove default styling for common elements */
 h1,
 h2,
 h3,
@@ -82,7 +81,6 @@ table {
   border-spacing: 0;
 }
 
-/* Remove default focus outline and add custom one */
 :focus {
   outline: none;
 }
@@ -92,19 +90,16 @@ table {
   outline-offset: 2px;
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Better text rendering */
 body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Remove iOS input styling */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -115,7 +110,6 @@ textarea {
   appearance: none;
 }
 
-/* Remove iOS button styling */
 button,
 input[type="button"],
 input[type="submit"] {

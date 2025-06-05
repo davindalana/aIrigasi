@@ -377,10 +377,6 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.distribution-chart {
-  margin-top: 1rem;
-}
-
 /* Chart Card */
 .chart-card {
   background: white;
@@ -388,13 +384,6 @@
   padding: 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-.chart-container {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #fafafa;
-  border-radius: 8px;
 }
 
 /* Responsive card adjustments */
