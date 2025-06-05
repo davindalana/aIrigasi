@@ -1,11 +1,11 @@
 const Hapi = require('@hapi/hapi');
-const mongoose = require('mongoose');
 require('dotenv').config();
+const connectDB = require('./config/database'); // Pastikan path ini sesuai dengan struktur folder Anda
 
 const init = async () => {
     // Inisialisasi server Hapi
     const server = Hapi.server({
-        port: process.env.PORT || 3000,
+        port: process.env.PORT,
         host: process.env.HOST || 'localhost',
         routes: {
             cors: {
@@ -17,28 +17,10 @@ const init = async () => {
     });
 
     // Koneksi ke MongoDB
-    try {
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/irrigation_db', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log('Connected to MongoDB');
-    } catch (error) {
-        console.error('MongoDB connection error:', error);
-        process.exit(1);
-    }
+    await connectDB();
 
     // Register routes
-    await server.register([
-        {
-            plugin: require('./routes/sensorRoutes'),
-            options: {}
-        },
-        {
-            plugin: require('./routes/predictionRoutes'),
-            options: {}
-        }
-    ]);
+    await server.register(require('./routes')); // <== cukup index.js saja
 
     // Health check route
     server.route({
