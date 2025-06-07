@@ -7,7 +7,8 @@ const predictionSchema = new mongoose.Schema({
     Temperature: Number,
     Air_Humidity: Number,
   },
-  result: Boolean,
+  result: String,
+  message: String,
   createdAt: {
     type: Date,
     default: Date.now,

@@ -2,8 +2,18 @@ const SensorData = require('../models/SensorData');
 
 exports.getAllSensorData = async (request, h) => {
     try {
-        const data = await SensorData.find().sort({ timeStamp: -1 }).limit(100);
-        return h.response(data).code(200);
+        const data = await SensorData.find()
+            .sort({ timestamp: -1 })
+            .limit(100)
+            .select('-__v'); 
+
+        // Optional: jika kamu ingin menghilangkan _id juga:
+        const cleanData = data.map(({ _doc }) => {
+            const { _id, __v, ...rest } = _doc;
+            return rest;
+        });
+
+        return h.response(cleanData).code(200);
     } catch (error) {
         console.error("Error fetching data:", error); // <- Tambahkan ini
         return h.response({ message: 'Failed to get sensor data', error }).code(500);
