@@ -1,45 +1,64 @@
 class SimpleReportPresenter {
   constructor() {
-    this.mockData = this.generateMockData();
+    this.mockData = this.generateMockDataForAllDevices();
   }
 
-  // Generate mock data for demonstration
-  generateMockData() {
-    const data = [];
-    const today = new Date();
+  generateMockDataForAllDevices() {
+    const allDeviceData = {};
+    const deviceIds = ["device1", "device2", "device3"];
 
-    for (let i = 30; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(today.getDate() - i);
+    deviceIds.forEach((deviceId) => {
+      const data = [];
+      const today = new Date();
 
-      const moisture = 200 + Math.random() * 600;
-      const temperature = 20 + Math.random() * 15;
-      const humidity = 40 + Math.random() * 40;
-      const needsWatering = moisture < 350;
+      for (let i = 30; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
 
-      data.push({
-        date: date.toISOString().split("T")[0],
-        time: date.toTimeString().split(" ")[0],
-        moisture: Math.round(moisture),
-        temperature: Math.round(temperature * 10) / 10,
-        humidity: Math.round(humidity),
-        watering: needsWatering,
-        confidence: 80 + Math.random() * 15,
-        type: needsWatering ? "watering" : "analysis",
-        status: "success",
-      });
-    }
+        let moisture, temperature, humidity, needsWatering;
 
-    return data;
+        if (deviceId === "device2") {
+          moisture = 180 + Math.random() * 400;
+          temperature = 28 + Math.random() * 10;
+          humidity = 35 + Math.random() * 45;
+          needsWatering = moisture < 300;
+        } else if (deviceId === "device3") {
+          moisture = 350 + Math.random() * 300;
+          temperature = 23 + Math.random() * 7;
+          humidity = 60 + Math.random() * 30;
+          needsWatering = moisture < 400;
+        } else {
+          moisture = 200 + Math.random() * 600;
+          temperature = 20 + Math.random() * 15;
+          humidity = 40 + Math.random() * 40;
+          needsWatering = moisture < 350;
+        }
+
+        data.push({
+          date: date.toISOString().split("T")[0],
+          time: date.toTimeString().split(" ")[0],
+          moisture: Math.round(moisture),
+          temperature: Math.round(temperature * 10) / 10,
+          humidity: Math.round(humidity),
+          watering: needsWatering,
+          confidence: 80 + Math.random() * 15,
+          type: needsWatering ? "watering" : "analysis",
+          status: "success",
+          deviceId: deviceId,
+        });
+      }
+      allDeviceData[deviceId] = data;
+    });
+
+    return allDeviceData;
   }
 
-  // Main method to generate report
-  async generateReport(dateRange = "7days") {
-    // Simulate API delay
+  async generateReport(dateRange = "7days", deviceId = "device1") {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     const days = this.getDaysFromRange(dateRange);
-    const filteredData = this.mockData.slice(-days);
+    const allDataForDevice = this.mockData[deviceId] || [];
+    const filteredData = allDataForDevice.slice(-days);
 
     return {
       period: {
@@ -73,14 +92,17 @@ class SimpleReportPresenter {
     const avgConfidence =
       data.reduce((sum, item) => sum + item.confidence, 0) / data.length;
     const efficiency =
-      wateringEvents > 0 ? (wateringEvents / totalAnalyses) * 100 : 100;
+      totalAnalyses > 0
+        ? ((totalAnalyses - wateringEvents) / totalAnalyses) * 100 +
+          Math.random() * 10
+        : 100;
 
     const latestData = data[data.length - 1] || {};
 
     return {
       totalAnalyses,
       wateringEvents,
-      efficiency: Math.round(efficiency),
+      efficiency: Math.min(100, Math.round(efficiency)),
       confidence: Math.round(avgConfidence),
       currentConditions: {
         moisture: latestData.moisture || 0,
@@ -96,17 +118,14 @@ class SimpleReportPresenter {
   }
 
   generateAnalytics(data) {
-    // Daily trends for chart
     const dailyTrends = this.groupByDate(data);
 
-    // Moisture distribution
     const moistureDistribution = this.calculateDistribution(
       data.map((item) => item.moisture),
       [0, 300, 600, 1023],
       ["low", "medium", "high"]
     );
 
-    // Temperature distribution
     const temperatureDistribution = this.calculateDistribution(
       data.map((item) => item.temperature),
       [0, 20, 30, 50],
@@ -141,10 +160,10 @@ class SimpleReportPresenter {
       grouped[date].avgTemp += item.temperature;
     });
 
-    // Calculate averages
     Object.values(grouped).forEach((day) => {
       day.avgMoisture = Math.round(day.avgMoisture / day.analyses);
       day.avgTemp = Math.round((day.avgTemp / day.analyses) * 10) / 10;
+      day.analysesScaled = Math.min(10, day.analyses);
     });
 
     return Object.values(grouped).sort(
@@ -168,17 +187,43 @@ class SimpleReportPresenter {
 
   generateHistory(data) {
     const recentActivities = data
-      .slice(-10) // Last 10 activities
+      .slice(-10)
       .reverse()
-      .map((item) => ({
-        type: item.watering ? "watering" : "analysis",
-        title: item.watering ? "Watering Completed" : "Analysis Completed",
-        time: this.formatTimeAgo(item.date),
-        description: item.watering
-          ? `Soil moisture was ${item.moisture}, watering was needed`
-          : `Soil moisture at ${item.moisture}, no watering needed`,
-        status: "success",
-      }));
+      .map((item, index) => {
+        let type, title, description, status;
+
+        if (item.watering) {
+          type = "watering";
+          title = "Watering Completed";
+          description = `Soil moisture was ${item.moisture} units, watering was needed.`;
+          status = "success";
+        } else {
+          type = "analysis";
+          title = "Analysis Completed";
+          description = `Soil moisture at ${item.moisture} units, no watering needed.`;
+          status = "success";
+        }
+
+        if (index === 2) {
+          type = "alert";
+          title = "High Temperature Alert";
+          description = `Temperature reached ${item.temperature}°C. Consider shade or increased misting.`;
+          status = "warning";
+        } else if (index === 5) {
+          type = "system";
+          title = "System Maintenance Log";
+          description = `Routine system check performed. All sensors operating optimally.`;
+          status = "info";
+        }
+
+        return {
+          type: type,
+          title: title,
+          time: this.formatTimeAgo(item.date),
+          description: description,
+          status: status,
+        };
+      });
 
     return {
       recentActivities,
@@ -196,7 +241,6 @@ class SimpleReportPresenter {
     return `${diffDays} days ago`;
   }
 
-  // Method to export report data
   async exportReport(reportData, format = "json") {
     switch (format) {
       case "csv":
@@ -221,9 +265,9 @@ class SimpleReportPresenter {
       day.date,
       day.avgMoisture,
       day.avgTemp,
-      "-", // humidity not tracked in simple version
+      "-",
       day.watering > 0 ? "Yes" : "No",
-      "-", // confidence not tracked per day in simple version
+      "-",
     ]);
 
     return [headers, ...rows].map((row) => row.join(",")).join("\n");

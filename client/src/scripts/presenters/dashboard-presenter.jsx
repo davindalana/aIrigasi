@@ -5,7 +5,6 @@ class DashboardPresenter {
   }
 
   initWeatherService() {
-    // Mock weather service
     return {
       getCurrentWeather: () => ({
         rainForecast: Math.random() > 0.7 ? "Yes" : "No",
@@ -21,12 +20,10 @@ class DashboardPresenter {
       predict: (sensorData, weatherData) => {
         const { soilMoisture, temperature, airHumidity } = sensorData;
 
-        // AI Decision Logic
         let needsWatering = false;
         let confidence = 0;
         let modelConfidence = 90 + Math.random() * 8;
 
-        // Primary factors
         if (soilMoisture < 300) {
           needsWatering = true;
           confidence = 85 + Math.random() * 10;
@@ -43,7 +40,6 @@ class DashboardPresenter {
           confidence = 80 + Math.random() * 15;
         }
 
-        // Weather adjustments
         if (weatherData.rainForecast === "Yes") {
           needsWatering = false;
           confidence = Math.min(confidence + 10, 95);
@@ -61,7 +57,6 @@ class DashboardPresenter {
   }
 
   async loadWeatherData() {
-    // Simulate API call
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(this.weatherService.getCurrentWeather());
@@ -70,7 +65,6 @@ class DashboardPresenter {
   }
 
   async analyzeIrrigationNeeds(sensorData, weatherData) {
-    // Simulate processing time
     return new Promise((resolve) => {
       setTimeout(() => {
         const decision = this.aiModel.predict(sensorData, weatherData);
@@ -79,31 +73,22 @@ class DashboardPresenter {
     });
   }
 
-  // --- Start: Penambahan Kode untuk Pump Status ---
   async getPumpStatus(sensorData) {
-    //
-    // Simulasikan logika status pompa berdasarkan data sensor
-    // Jika kelembaban sangat rendah, pompa ON. Jika tidak, bisa OFF atau ON secara acak untuk demo.
     return new Promise((resolve) => {
-      //
       setTimeout(() => {
-        //
-        const { soilMoisture } = sensorData; //
-        let status = "OFF"; //
+        const { soilMoisture } = sensorData;
+        let status = "OFF";
 
         if (soilMoisture < 250) {
-          // Jika tanah sangat kering, pompa ON
-          status = "ON"; //
+          status = "ON";
         } else if (soilMoisture < 350 && Math.random() > 0.5) {
-          // Jika kering sedang, ada kemungkinan ON
-          status = "ON"; //
+          status = "ON";
         }
 
-        resolve({ status }); //
-      }, 300); // Penundaan simulasi
-    }); //
+        resolve({ status });
+      }, 300);
+    });
   }
-  // --- End: Penambahan Kode untuk Pump Status ---
 
   validateSensorData(sensorData) {
     const errors = [];

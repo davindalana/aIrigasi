@@ -13,6 +13,7 @@ const AnalysisPage = () => {
       optimalMoistureRange: { min: 300, max: 600 },
     },
     selectedTimeRange: "7days",
+    selectedDeviceId: "device1",
     isLoading: true,
   });
 
@@ -20,16 +21,22 @@ const AnalysisPage = () => {
 
   useEffect(() => {
     loadAnalysisData();
-  }, [state.selectedTimeRange]);
+  }, [state.selectedTimeRange, state.selectedDeviceId]);
 
   const loadAnalysisData = async () => {
     setState((prev) => ({ ...prev, isLoading: true }));
 
     try {
       const [historical, trends, statistics] = await Promise.all([
-        presenter.getHistoricalData(state.selectedTimeRange),
-        presenter.getTrendData(state.selectedTimeRange),
-        presenter.getStatisticsData(state.selectedTimeRange),
+        presenter.getHistoricalData(
+          state.selectedTimeRange,
+          state.selectedDeviceId
+        ),
+        presenter.getTrendData(state.selectedTimeRange, state.selectedDeviceId),
+        presenter.getStatisticsData(
+          state.selectedTimeRange,
+          state.selectedDeviceId
+        ),
       ]);
 
       setState((prev) => ({
@@ -52,6 +59,13 @@ const AnalysisPage = () => {
     }));
   };
 
+  const handleDeviceChange = (deviceId) => {
+    setState((prev) => ({
+      ...prev,
+      selectedDeviceId: deviceId,
+    }));
+  };
+
   const handleExportData = () => {
     presenter.exportAnalysisData(state.historicalData, state.selectedTimeRange);
   };
@@ -62,8 +76,10 @@ const AnalysisPage = () => {
       trendData={state.trendData}
       statisticsData={state.statisticsData}
       selectedTimeRange={state.selectedTimeRange}
+      selectedDeviceId={state.selectedDeviceId}
       isLoading={state.isLoading}
       onTimeRangeChange={handleTimeRangeChange}
+      onDeviceChange={handleDeviceChange}
       onExportData={handleExportData}
     />
   );

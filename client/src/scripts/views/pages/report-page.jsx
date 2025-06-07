@@ -7,17 +7,18 @@ const SimpleReportPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState("7days");
   const [activeTab, setActiveTab] = useState("summary");
+  const [selectedDeviceId, setSelectedDeviceId] = useState("device1");
 
   const presenter = new SimpleReportPresenter();
 
   useEffect(() => {
     loadReport();
-  }, [dateRange]);
+  }, [dateRange, selectedDeviceId]);
 
   const loadReport = async () => {
     setIsLoading(true);
     try {
-      const data = await presenter.generateReport(dateRange);
+      const data = await presenter.generateReport(dateRange, selectedDeviceId);
       setReportData(data);
     } catch (error) {
       console.error("Error loading report:", error);
@@ -34,14 +35,20 @@ const SimpleReportPage = () => {
     setActiveTab(tab);
   };
 
+  const handleDeviceChange = (deviceId) => {
+    setSelectedDeviceId(deviceId);
+  };
+
   return (
     <ReportTemplate
       reportData={reportData}
       isLoading={isLoading}
       dateRange={dateRange}
       activeTab={activeTab}
+      selectedDeviceId={selectedDeviceId}
       onDateRangeChange={handleDateRangeChange}
       onTabChange={handleTabChange}
+      onDeviceChange={handleDeviceChange}
       onRefresh={loadReport}
     />
   );

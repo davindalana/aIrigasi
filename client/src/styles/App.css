@@ -1,10 +1,7 @@
-/* src/styles/App.css */
-/* App Specific Styles */
 .App {
   min-height: 100vh;
 }
 
-/* App Bar Styles */
 .app-bar {
   background: linear-gradient(135deg, #4caf50, #45a049);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -38,14 +35,12 @@
   font-weight: 600;
 }
 
-/* Main Content */
 .main-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .app-bar-content {
     flex-direction: column;

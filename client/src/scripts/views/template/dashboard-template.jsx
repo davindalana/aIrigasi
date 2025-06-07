@@ -1,4 +1,3 @@
-// src/scripts/views/template/dashboard-template.jsx
 import React from "react";
 import "../../../styles/pages/dashboard.css";
 import "../../../styles/components/cards.css";
@@ -10,19 +9,39 @@ const DashboardTemplate = ({
   sensorData,
   weatherData,
   aiDecision,
-  pumpStatus, // --- Terima pumpStatus sebagai prop
+  pumpStatus,
   isLoading,
+  selectedDeviceId,
   onSensorChange,
   onAnalyze,
+  onDeviceChange,
 }) => {
-  const pumpStatusClass = pumpStatus === "ON" ? "pump-on" : "pump-off"; //
-  const pumpStatusText = pumpStatus === "ON" ? "Pump ON" : "Pump OFF"; //
+  const pumpStatusClass = pumpStatus === "ON" ? "pump-on" : "pump-off";
+  const pumpStatusText = pumpStatus === "ON" ? "Pump ON" : "Pump OFF";
 
   return (
     <div className="dashboard">
       <div className="dashboard-header">
         <h2>AIrigasi</h2>
         <p>AI-Powered Plant Watering Decision System</p>
+      </div>
+
+      <div className="card sensor-input-card">
+        <div className="card-header">
+          🆔 <span>Select Device</span>
+        </div>
+        <div className="input-group">
+          <label className="input-label">Device ID</label>
+          <select
+            className="sensor-input device-select"
+            value={selectedDeviceId}
+            onChange={(e) => onDeviceChange(e.target.value)}
+          >
+            <option value="device1">Device 1</option>
+            <option value="device2">Device 2</option>
+            <option value="device3">Device 3</option>
+          </select>
+        </div>
       </div>
 
       <div className="card sensor-input-card">
@@ -115,7 +134,6 @@ const DashboardTemplate = ({
       </div>
 
       <div className="sensor-display">
-        {/* --- Start: Tambahkan Card Indikator Pompa --- */}
         <div className={`sensor-card ${pumpStatusClass}`}>
           <h4>WATER PUMP</h4>
           <div className="sensor-value">
@@ -124,7 +142,6 @@ const DashboardTemplate = ({
           </div>
           <div className="sensor-unit">Status</div>
         </div>
-        {/* --- End: Tambahkan Card Indikator Pompa --- */}
 
         <div className="sensor-card">
           <h4>SOIL MOISTURE</h4>

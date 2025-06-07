@@ -1,6 +1,3 @@
-/* Tables and Data Display */
-
-/* Data Table Container */
 .data-table-container h3 {
   color: #2d3748;
   font-size: 1.1rem;
@@ -40,7 +37,6 @@
   background: #f1f5f9;
 }
 
-/* Events Table */
 .events-table {
   overflow-x: auto;
 }
@@ -81,7 +77,6 @@
   font-size: 0.9rem;
 }
 
-/* Table Status and Types */
 .event-type {
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -138,7 +133,6 @@
   color: #2196f3;
 }
 
-/* Moisture Level Indicators */
 .low-moisture {
   color: #e53e3e;
   font-weight: 600;
@@ -166,7 +160,6 @@
   font-size: 0.8rem;
 }
 
-/* Mobile Table Responsiveness */
 @media (max-width: 768px) {
   .table-header,
   .table-row {

@@ -1,5 +1,4 @@
-// src/scripts/views/template/analysis-template.jsx
-import React, { useEffect, useRef } from "react"; // Tambahkan useRef
+import React, { useEffect, useRef } from "react";
 import "../../../styles/pages/analysis.css";
 import "../../../styles/components/cards.css";
 import "../../../styles/components/forms.css";
@@ -8,16 +7,15 @@ import "../../../styles/components/tables.css";
 import "../../../styles/components/buttons.css";
 import "../../../styles/components/loading.css";
 import {
-  Chart, // Impor Chart
-  LineElement, // Impor LineElement
-  CategoryScale, // Impor CategoryScale (untuk sumbu x)
-  LinearScale, // Impor LinearScale (untuk sumbu y)
-  PointElement, // Impor PointElement
-  Tooltip, // Impor Tooltip
-  Legend, // Impor Legend
-} from "chart.js/auto"; // Impor semua yang dibutuhkan dari chart.js/auto
+  Chart,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend,
+} from "chart.js/auto";
 
-// Daftarkan komponen Chart.js
 Chart.register(
   LineElement,
   CategoryScale,
@@ -32,17 +30,17 @@ const AnalysisTemplate = ({
   trendData,
   statisticsData,
   selectedTimeRange,
+  selectedDeviceId,
   isLoading,
   onTimeRangeChange,
+  onDeviceChange,
   onExportData,
 }) => {
-  // Buat referensi untuk setiap canvas grafik
   const moistureChartRef = useRef(null);
   const temperatureChartRef = useRef(null);
   const humidityChartRef = useRef(null);
   const wateringChartRef = useRef(null);
 
-  // Fungsi untuk membersihkan grafik sebelumnya
   const destroyChart = (chartRef) => {
     if (chartRef.current) {
       chartRef.current.destroy();
@@ -51,9 +49,7 @@ const AnalysisTemplate = ({
   };
 
   useEffect(() => {
-    // Pastikan data ada dan tidak sedang loading sebelum menggambar grafik
     if (historicalData && historicalData.length > 0 && !isLoading) {
-      // Hancurkan grafik yang ada sebelum menggambar yang baru
       destroyChart(moistureChartRef);
       destroyChart(temperatureChartRef);
       destroyChart(humidityChartRef);
@@ -66,7 +62,6 @@ const AnalysisTemplate = ({
         })
       );
 
-      // Grafik Kelembaban Tanah
       const moistureCtx = document.getElementById("moistureChart");
       if (moistureCtx) {
         moistureChartRef.current = new Chart(moistureCtx, {
@@ -115,7 +110,6 @@ const AnalysisTemplate = ({
         });
       }
 
-      // Grafik Suhu
       const temperatureCtx = document.getElementById("temperatureChart");
       if (temperatureCtx) {
         temperatureChartRef.current = new Chart(temperatureCtx, {
@@ -164,7 +158,6 @@ const AnalysisTemplate = ({
         });
       }
 
-      // Grafik Kelembaban Udara
       const humidityCtx = document.getElementById("humidityChart");
       if (humidityCtx) {
         humidityChartRef.current = new Chart(humidityCtx, {
@@ -214,7 +207,6 @@ const AnalysisTemplate = ({
         });
       }
 
-      // Grafik Status Penyiraman
       const wateringCtx = document.getElementById("wateringChart");
       if (wateringCtx) {
         wateringChartRef.current = new Chart(wateringCtx, {
@@ -230,7 +222,7 @@ const AnalysisTemplate = ({
                 borderColor: "#9c27b0",
                 backgroundColor: "rgba(156, 39, 176, 0.2)",
                 tension: 0.3,
-                stepSize: 1, // Untuk tampilan biner
+                stepSize: 1,
               },
             ],
           },
@@ -240,7 +232,7 @@ const AnalysisTemplate = ({
             scales: {
               y: {
                 beginAtZero: true,
-                max: 1.1, // Agar 1.0 terlihat jelas
+                max: 1.1,
                 ticks: {
                   callback: function (value) {
                     return value === 1 ? "Needed" : "Not Needed";
@@ -275,14 +267,13 @@ const AnalysisTemplate = ({
       }
     }
 
-    // Fungsi cleanup untuk menghancurkan grafik saat komponen di-unmount
     return () => {
       destroyChart(moistureChartRef);
       destroyChart(temperatureChartRef);
       destroyChart(humidityChartRef);
       destroyChart(wateringChartRef);
     };
-  }, [historicalData, isLoading, selectedTimeRange]); // Tambahkan selectedTimeRange sebagai dependensi
+  }, [historicalData, isLoading, selectedTimeRange, selectedDeviceId]);
 
   const getTimeRangeLabel = (range) => {
     switch (range) {
@@ -341,6 +332,19 @@ const AnalysisTemplate = ({
       <div className="analysis-header">
         <h1>Plant Analysis Dashboard</h1>
         <div className="analysis-controls">
+          <div className="time-range-selector">
+            <label>Device ID:</label>
+            <select
+              value={selectedDeviceId}
+              onChange={(e) => onDeviceChange(e.target.value)}
+              className="time-range-select device-select"
+            >
+              <option value="device1">Device 1</option>
+              <option value="device2">Device 2</option>
+              <option value="device3">Device 3</option>
+            </select>
+          </div>
+
           <div className="time-range-selector">
             <label>Time Range:</label>
             <select
@@ -409,13 +413,11 @@ const AnalysisTemplate = ({
             <div className="chart-placeholder">
               <h3>Soil Moisture Over Time</h3>
               <div className="chart-wrapper">
-                {/* Canvas untuk grafik kelembaban tanah */}
                 <canvas id="moistureChart"></canvas>
               </div>
             </div>
           </div>
 
-          {/* Grafik Suhu */}
           <div className="chart-container">
             <div className="chart-placeholder">
               <h3>Temperature Over Time</h3>
@@ -425,7 +427,6 @@ const AnalysisTemplate = ({
             </div>
           </div>
 
-          {/* Grafik Kelembaban Udara */}
           <div className="chart-container">
             <div className="chart-placeholder">
               <h3>Air Humidity Over Time</h3>
@@ -435,7 +436,6 @@ const AnalysisTemplate = ({
             </div>
           </div>
 
-          {/* Grafik Status Penyiraman */}
           <div className="chart-container">
             <div className="chart-placeholder">
               <h3>Daily Watering Status</h3>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import DashboardPresenter from "../../presenters/dashboard-presenter"; //
-import DashboardTemplate from "../template/dashboard-template"; //
+import DashboardPresenter from "../../presenters/dashboard-presenter";
+import DashboardTemplate from "../template/dashboard-template";
 
 const DashboardPage = () => {
   const [state, setState] = useState({
@@ -20,34 +20,30 @@ const DashboardPage = () => {
       confidence: 83.0,
       modelConfidence: 93.0,
     },
-    pumpStatus: "OFF", // --- Start: Tambahkan state untuk pumpStatus
+    pumpStatus: "OFF",
     isLoading: false,
+    selectedDeviceId: "device1",
   });
 
-  const presenter = new DashboardPresenter(); //
+  const presenter = new DashboardPresenter();
 
   useEffect(() => {
-    // Initialize weather data
-    presenter.loadWeatherData().then((weather) => {
-      //
+    presenter.loadWeatherData(state.selectedDeviceId).then((weather) => {
       setState((prev) => ({
-        //
-        ...prev, //
-        weatherData: weather, //
-      })); //
-    }); //
+        ...prev,
+        weatherData: weather,
+      }));
+    });
 
-    // --- Start: Muat status pompa awal
-    presenter.getPumpStatus(state.sensorData).then((pump) => {
-      //
-      setState((prev) => ({
-        //
-        ...prev, //
-        pumpStatus: pump.status, //
-      })); //
-    }); //
-    // --- End: Muat status pompa awal
-  }, []); //
+    presenter
+      .getPumpStatus(state.sensorData, state.selectedDeviceId)
+      .then((pump) => {
+        setState((prev) => ({
+          ...prev,
+          pumpStatus: pump.status,
+        }));
+      });
+  }, [state.selectedDeviceId]);
 
   const handleSensorChange = (field, value) => {
     const newSensorData = {
@@ -66,15 +62,18 @@ const DashboardPage = () => {
 
     try {
       const [decision, pump] = await Promise.all([
-        // --- Start: Muat decision dan pump status secara paralel
-        presenter.analyzeIrrigationNeeds(state.sensorData, state.weatherData), //
-        presenter.getPumpStatus(state.sensorData), //
-      ]); //
+        presenter.analyzeIrrigationNeeds(
+          state.sensorData,
+          state.weatherData,
+          state.selectedDeviceId
+        ),
+        presenter.getPumpStatus(state.sensorData, state.selectedDeviceId),
+      ]);
 
       setState((prev) => ({
         ...prev,
         aiDecision: decision,
-        pumpStatus: pump.status, // --- Tambahkan update pumpStatus
+        pumpStatus: pump.status,
         isLoading: false,
       }));
     } catch (error) {
@@ -83,15 +82,29 @@ const DashboardPage = () => {
     }
   };
 
+  const handleDeviceChange = (deviceId) => {
+    setState((prev) => ({
+      ...prev,
+      selectedDeviceId: deviceId,
+      sensorData: {
+        soilMoisture: 450,
+        temperature: 28,
+        airHumidity: 65,
+      },
+    }));
+  };
+
   return (
     <DashboardTemplate
       sensorData={state.sensorData}
       weatherData={state.weatherData}
       aiDecision={state.aiDecision}
-      pumpStatus={state.pumpStatus} // --- Teruskan pumpStatus ke template
+      pumpStatus={state.pumpStatus}
       isLoading={state.isLoading}
+      selectedDeviceId={state.selectedDeviceId}
       onSensorChange={handleSensorChange}
       onAnalyze={handleAnalyze}
+      onDeviceChange={handleDeviceChange}
     />
   );
 };

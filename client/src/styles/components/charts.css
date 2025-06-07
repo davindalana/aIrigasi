@@ -1,6 +1,3 @@
-/* Charts and Data Visualization */
-
-/* Chart Container */
 .chart-container {
   margin-bottom: 30px;
   margin-top: 1rem;
@@ -16,36 +13,41 @@
   font-size: 1.1rem;
 }
 
-/* Simple Chart */
 .simple-chart {
   display: flex;
-  align-items: end;
-  justify-content: center;
-  gap: 10px;
+  align-items: flex-end;
+  justify-content: space-around;
   height: 200px;
   padding: 20px;
   background: #f7fafc;
   border-radius: 10px;
+  overflow-x: auto;
+  position: relative;
+  min-width: 300px;
 }
 
 .chart-bar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-}
-
-.bar {
+  justify-content: flex-end;
   width: 30px;
-  min-height: 10px;
-  border-radius: 4px 4px 0 0;
-  transition: all 0.3s ease;
   position: relative;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
 }
 
-.bar:hover {
-  transform: scaleY(1.05);
+.bar-fill {
+  width: 100%;
+  min-height: 5px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.bar-fill:hover {
+  transform: scaleY(1.02);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -53,9 +55,18 @@
   font-size: 0.75rem;
   color: #718096;
   font-weight: 500;
+  margin-top: 5px;
+  white-space: nowrap;
 }
 
-/* Chart Card */
+.bar-value {
+  position: absolute;
+  top: -20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #333;
+}
+
 .chart-card {
   background: white;
   border-radius: 16px;
@@ -64,7 +75,6 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Distribution Grid and Charts */
 .distribution-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -83,7 +93,6 @@
   margin-top: 1rem;
 }
 
-/* Progress Bars and Condition Bars */
 .condition-bar {
   flex: 2;
   height: 8px;
@@ -111,7 +120,6 @@
   background: linear-gradient(90deg, #2196f3, #03a9f4);
 }
 
-/* Confidence Bar */
 .confidence-bar {
   height: 8px;
   background: #e0e0e0;
@@ -134,7 +142,6 @@
   background: linear-gradient(90deg, #4caf50, #45a049);
 }
 
-/* Performance Circles */
 .performance-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -189,7 +196,6 @@
   text-align: center;
 }
 
-/* Mobile Chart Responsiveness */
 @media (max-width: 768px) {
   .distribution-grid {
     grid-template-columns: 1fr;
@@ -220,7 +226,7 @@
     padding: 10px;
   }
 
-  .bar {
+  .chart-bar {
     width: 20px;
   }
 }
@@ -231,7 +237,6 @@
   }
 }
 
-/* Print Styles for Charts */
 @media print {
   .chart-container {
     background: white !important;

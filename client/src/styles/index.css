@@ -1,8 +1,6 @@
 @import "tailwindcss";
 
-/* Anda bisa menambahkan gaya dasar kustom di sini jika benar-benar diperlukan, */
-/* tetapi usahakan untuk memaksimalkan penggunaan kelas utility Tailwind. */
 body {
-  font-family: "Inter", sans-serif; /* Contoh penggantian font default */
-  @apply bg-gray-100 text-gray-800; /* Gaya dasar untuk body */
+  font-family: "Inter", sans-serif;
+  @apply bg-gray-100 text-gray-800;
 }

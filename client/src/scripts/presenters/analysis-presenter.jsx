@@ -5,7 +5,7 @@ class AnalysisPresenter {
 
   initDataService() {
     return {
-      generateHistoricalData: (timeRange) => {
+      generateHistoricalData: (timeRange, deviceId) => {
         const days = this.getTimeRangeDays(timeRange);
         const data = [];
 
@@ -13,15 +13,28 @@ class AnalysisPresenter {
           const date = new Date();
           date.setDate(date.getDate() - i);
 
-          // Generate realistic sensor data
-          const soilMoisture = 200 + Math.random() * 600;
-          const temperature = 20 + Math.random() * 20;
-          const humidity = 40 + Math.random() * 40;
+          let soilMoisture, temperature, humidity;
+          let needsWatering;
+          let confidence = 70 + Math.random() * 25;
 
-          // Determine watering recommendation based on conditions
-          const needsWatering =
-            soilMoisture < 350 || (soilMoisture < 450 && temperature > 30);
-          const confidence = 70 + Math.random() * 25;
+          if (deviceId === "device2") {
+            soilMoisture = 150 + Math.random() * 500;
+            temperature = 25 + Math.random() * 15;
+            humidity = 30 + Math.random() * 50;
+            needsWatering =
+              soilMoisture < 250 || (soilMoisture < 400 && temperature > 32);
+          } else if (deviceId === "device3") {
+            soilMoisture = 300 + Math.random() * 400;
+            temperature = 22 + Math.random() * 8;
+            humidity = 50 + Math.random() * 30;
+            needsWatering = soilMoisture < 380;
+          } else {
+            soilMoisture = 200 + Math.random() * 600;
+            temperature = 20 + Math.random() * 20;
+            humidity = 40 + Math.random() * 40;
+            needsWatering =
+              soilMoisture < 350 || (soilMoisture < 450 && temperature > 30);
+          }
 
           data.push({
             date: date.toISOString().split("T")[0],
@@ -66,7 +79,6 @@ class AnalysisPresenter {
           (d) => d.recommendation === "WATERING NEEDED"
         ).length;
 
-        // Moisture insights
         if (avgMoisture < 300) {
           insights.push({
             type: "warning",
@@ -85,7 +97,6 @@ class AnalysisPresenter {
           });
         }
 
-        // Temperature insights
         if (avgTemp > 35) {
           insights.push({
             type: "warning",
@@ -96,7 +107,6 @@ class AnalysisPresenter {
           });
         }
 
-        // Watering pattern insights
         const wateringPercentage = (wateringDays / historicalData.length) * 100;
         if (wateringPercentage > 70) {
           insights.push({
@@ -109,7 +119,6 @@ class AnalysisPresenter {
           });
         }
 
-        // Trend insights
         if (trendData.moistureTrend === "decreasing") {
           insights.push({
             type: "warning",
@@ -152,7 +161,7 @@ class AnalysisPresenter {
       secondHalf.reduce((sum, val) => sum + val, 0) / secondHalf.length;
 
     const difference = secondAvg - firstAvg;
-    const threshold = firstAvg * 0.1; // 10% threshold
+    const threshold = firstAvg * 0.1;
 
     if (difference > threshold) return "increasing";
     if (difference < -threshold) return "decreasing";
@@ -170,19 +179,21 @@ class AnalysisPresenter {
     };
   }
 
-  // New methods for the AnalysisPage
-  async getHistoricalData(timeRange = "7days") {
+  async getHistoricalData(timeRange = "7days", deviceId) {
     try {
-      return this.dataService.generateHistoricalData(timeRange);
+      return this.dataService.generateHistoricalData(timeRange, deviceId);
     } catch (error) {
       console.error("Error getting historical data:", error);
       throw error;
     }
   }
 
-  async getTrendData(timeRange = "7days") {
+  async getTrendData(timeRange = "7days", deviceId) {
     try {
-      const historicalData = this.dataService.generateHistoricalData(timeRange);
+      const historicalData = this.dataService.generateHistoricalData(
+        timeRange,
+        deviceId
+      );
       return this.dataService.generateTrendData(historicalData);
     } catch (error) {
       console.error("Error getting trend data:", error);
@@ -190,9 +201,12 @@ class AnalysisPresenter {
     }
   }
 
-  async getStatisticsData(timeRange = "7days") {
+  async getStatisticsData(timeRange = "7days", deviceId) {
     try {
-      const historicalData = this.dataService.generateHistoricalData(timeRange);
+      const historicalData = this.dataService.generateHistoricalData(
+        timeRange,
+        deviceId
+      );
       const wateringRecommendations = historicalData.filter(
         (d) => d.recommendation === "WATERING NEEDED"
       ).length;
@@ -232,9 +246,12 @@ class AnalysisPresenter {
     }
   }
 
-  async loadAnalysisData(timeRange = "7d") {
+  async loadAnalysisData(timeRange = "7d", deviceId) {
     try {
-      const historicalData = this.dataService.generateHistoricalData(timeRange);
+      const historicalData = this.dataService.generateHistoricalData(
+        timeRange,
+        deviceId
+      );
       const trendData = this.dataService.generateTrendData(historicalData);
       const insights = this.dataService.generateInsights(
         historicalData,

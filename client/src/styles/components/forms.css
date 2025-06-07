@@ -1,6 +1,3 @@
-/* Forms - Input Fields, Selectors, and Form Controls */
-
-/* Sensor Input Fields */
 .sensor-input {
   padding: 1rem;
   border: 2px solid #e0e0e0;
@@ -21,7 +18,6 @@
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
 }
 
-/* Input Groups */
 .input-group {
   display: flex;
   flex-direction: column;
@@ -34,7 +30,6 @@
   font-size: clamp(0.8rem, 1.5vw, 0.9rem);
 }
 
-/* Time Range Selector */
 .time-range-selector {
   display: flex;
   align-items: center;
@@ -63,7 +58,6 @@
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-/* Date Range Selector */
 .date-range-selector {
   position: relative;
 }
@@ -91,7 +85,6 @@
   color: white;
 }
 
-/* Sensor Input Grid */
 .sensor-inputs {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -99,21 +92,18 @@
   margin-bottom: 2rem;
 }
 
-/* Desktop specific grid */
 @media (min-width: 1024px) {
   .sensor-inputs {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-/* Tablet specific grid */
 @media (min-width: 768px) and (max-width: 1023px) {
   .sensor-inputs {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Mobile responsive forms */
 @media (max-width: 768px) {
   .sensor-inputs {
     grid-template-columns: 1fr;
@@ -127,9 +117,19 @@
   }
 }
 
-/* Large desktop optimizations */
 @media (min-width: 1400px) {
   .sensor-inputs {
     grid-template-columns: repeat(5, 1fr);
   }
+}
+
+.device-select {
+  background: #f0f8ff;
+  border-color: #a7d9ff;
+  color: #333;
+}
+
+.device-select:focus {
+  border-color: #2196f3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
 }

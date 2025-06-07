@@ -1,7 +1,3 @@
-/* src/styles/components/navigation.css (Perbaikan dilakukan di sini) */
-/* Navigation and App Bar */
-
-/* Navigation Tabs */
 .report-nav {
   background: white;
   padding: 0 2rem;
@@ -64,14 +60,12 @@
   border-color: white;
 }
 
-/* Analysis Controls */
 .analysis-controls {
   display: flex;
   gap: 15px;
   align-items: center;
 }
 
-/* Header Actions */
 .header-actions {
   display: flex;
   gap: 1rem;
@@ -79,7 +73,6 @@
   flex-wrap: wrap;
 }
 
-/* Mobile Navigation */
 @media (max-width: 768px) {
   .report-nav {
     padding: 0 1rem;

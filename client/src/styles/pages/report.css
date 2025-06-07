@@ -1,5 +1,3 @@
-/* src/styles/pages/report.css */
-/* Report Container */
 .report-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -7,7 +5,6 @@
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Report Header */
 .report-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -72,7 +69,6 @@
   font-weight: 500;
 }
 
-/* Distribution Grid */
 .distribution-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -80,19 +76,16 @@
   margin-bottom: 2rem;
 }
 
-/* Timeline */
 .timeline-container {
   max-height: 500px;
   overflow-y: auto;
   padding-right: 1rem;
 }
 
-/* Events Table */
 .events-table {
   overflow-x: auto;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .report-container {
     padding: 0;
@@ -234,7 +227,6 @@
   }
 }
 
-/* Animation and Transitions */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -252,7 +244,6 @@
   animation: fadeIn 0.5s ease-out;
 }
 
-/* Custom Scrollbar */
 .timeline-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -271,7 +262,6 @@
   background: #999;
 }
 
-/* Print Styles */
 @media print {
   .report-header,
   .report-nav {
