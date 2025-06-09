@@ -9,10 +9,9 @@ const DashboardPage = () => {
       Temperature: 0,
       Air_Humidity: 0,
     },
+    // State aiDecision diperbarui
     aiDecision: {
       recommendation: "Waiting for analysis...",
-      confidence: 0,
-      modelConfidence: 0,
     },
     pumpStatus: "OFF",
     isLoading: true,
@@ -33,15 +32,23 @@ const DashboardPage = () => {
       const latestData = await presenter.getLatestSensorData(
         state.selectedDeviceId
       );
-      setState((prev) => ({
-        ...prev,
-        sensorData: {
-          Soil_Moisture: latestData.Soil_Moisture,
-          Temperature: latestData.Temperature,
-          Air_Humidity: latestData.Air_Humidity,
-        },
-        isLoading: false,
-      }));
+      if (latestData) {
+        setState((prev) => ({
+          ...prev,
+          sensorData: {
+            Soil_Moisture: latestData.Soil_Moisture,
+            Temperature: latestData.Temperature,
+            Air_Humidity: latestData.Air_Humidity,
+          },
+          aiDecision: {
+            recommendation: "Waiting for analysis...",
+          },
+          pumpStatus: "OFF",
+          isLoading: false,
+        }));
+      } else {
+        setState((prev) => ({ ...prev, isLoading: false }));
+      }
     };
 
     loadLatestData();
@@ -58,12 +65,11 @@ const DashboardPage = () => {
 
     const decision = await presenter.analyzeIrrigationNeeds(dataToPredict);
 
+    // Perbarui state dengan keputusan baru, hapus confidence
     setState((prev) => ({
       ...prev,
       aiDecision: {
         recommendation: decision.recommendation,
-        confidence: decision.confidence,
-        modelConfidence: decision.modelConfidence,
       },
       pumpStatus: decision.pumpStatus,
       isLoading: false,

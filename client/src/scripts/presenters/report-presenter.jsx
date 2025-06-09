@@ -1,3 +1,6 @@
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 class SimpleReportPresenter {
   constructor() {
     this.apiUrl = "https://airigasi-production.up.railway.app/api";
@@ -35,9 +38,9 @@ class SimpleReportPresenter {
       return null;
     }
 
+    // Menghapus 'analytics' dari data yang digenerate
     return {
       summary: this.generateSummary(filteredData),
-      analytics: this.generateAnalytics(filteredData),
       history: this.generateHistory(filteredData),
     };
   }
@@ -58,20 +61,17 @@ class SimpleReportPresenter {
   generateSummary(data) {
     const totalAnalyses = data.length;
     const wateringEvents = data.filter((d) => d.Soil_Moisture < 400).length;
-    const avgConfidence =
-      data.reduce((sum, item) => sum + (item.confidence || 85), 0) /
-      data.length;
     const efficiency =
       totalAnalyses > 0
         ? ((totalAnalyses - wateringEvents) / totalAnalyses) * 100
         : 100;
     const latestData = data[data.length - 1] || {};
 
+    // avgConfidence dan properti confidence dihapus
     return {
       totalAnalyses,
       wateringEvents,
       efficiency: Math.round(efficiency),
-      confidence: Math.round(avgConfidence),
       currentConditions: {
         moisture: latestData.Soil_Moisture || 0,
         temperature: latestData.Temperature || 0,
@@ -80,43 +80,14 @@ class SimpleReportPresenter {
       systemStatus: {
         uptime: 99.5,
         lastAnalysis: this.formatTimeAgo(latestData.timestamp),
-        waterSaved: Math.round((totalAnalyses - wateringEvents) * 1.5),
       },
     };
-  }
-
-  generateAnalytics(data) {
-    const moistureDistribution = this.calculateDistribution(
-      data.map((item) => item.Soil_Moisture),
-      [0, 300, 600, 1023],
-      ["low", "medium", "high"]
-    );
-    const temperatureDistribution = this.calculateDistribution(
-      data.map((item) => item.Temperature),
-      [0, 20, 30, 50],
-      ["low", "medium", "high"]
-    );
-    return { moistureDistribution, temperatureDistribution, dailyTrends: [] };
-  }
-
-  calculateDistribution(values, thresholds, labels) {
-    const distribution = {};
-    const total = values.length;
-    if (total === 0) return { low: 0, medium: 0, high: 0 };
-
-    labels.forEach((label, index) => {
-      const min = thresholds[index];
-      const max = thresholds[index + 1];
-      const count = values.filter((val) => val >= min && val < max).length;
-      distribution[label] = Math.round((count / total) * 100);
-    });
-    return distribution;
   }
 
   generateHistory(data) {
     return {
       recentActivities: data
-        .slice(-5)
+        .slice(-15) // Menampilkan lebih banyak riwayat untuk PDF
         .reverse()
         .map((item) => ({
           type: item.Soil_Moisture < 400 ? "watering" : "analysis",
@@ -124,11 +95,89 @@ class SimpleReportPresenter {
             item.Soil_Moisture < 400
               ? "Watering Completed"
               : "Analysis Completed",
-          time: this.formatTimeAgo(item.timestamp),
-          description: `Moisture: ${item.Soil_Moisture}, Temp: ${item.Temperature}°C`,
+          time: new Date(item.timestamp).toLocaleString("id-ID"), // Format waktu lebih jelas
+          description: `Moisture: ${item.Soil_Moisture}, Temp: ${item.Temperature}°C, Hum: ${item.Air_Humidity}%`,
           status: "success",
         })),
     };
+  }
+
+  exportReportAsPDF(reportData, deviceId, dateRange) {
+    if (!reportData) {
+      alert("No data to export!");
+      return;
+    }
+
+    const doc = new jsPDF();
+    const { summary, history } = reportData;
+
+    // Judul Dokumen
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.text("Laporan Sistem AIrigasi", 105, 20, { align: "center" });
+
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Device ID: ${deviceId}`, 14, 30);
+    doc.text(`Rentang Waktu: ${dateRange}`, 14, 36);
+    doc.text(
+      `Tanggal Cetak: ${new Date().toLocaleDateString("id-ID")}`,
+      14,
+      42
+    );
+
+    // Garis Pemisah
+    doc.setLineWidth(0.5);
+    doc.line(14, 48, 196, 48);
+
+    // Bagian Ringkasan
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Ringkasan Laporan", 14, 60);
+
+    autoTable(doc, {
+      startY: 65,
+      theme: "grid",
+      head: [["Metrik", "Nilai"]],
+      // Body diperbarui untuk menghapus Confidence
+      body: [
+        ["Total Analisis", summary.totalAnalyses],
+        ["Total Penyiraman", `${summary.wateringEvents} kali`],
+        ["Efisiensi Sistem", `${summary.efficiency}%`],
+        ["Analisis Terakhir", `${summary.systemStatus.lastAnalysis}`],
+      ],
+      styles: { fontSize: 11 },
+      headStyles: { fillColor: [76, 175, 80] }, // Warna hijau
+    });
+
+    // Bagian Riwayat Aktivitas
+    doc.addPage();
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Riwayat Aktivitas", 14, 20);
+
+    const historyHead = [["Waktu", "Tipe", "Deskripsi", "Status"]];
+    const historyBody = history.recentActivities.map((act) => [
+      act.time,
+      act.type,
+      act.description,
+      act.status,
+    ]);
+
+    autoTable(doc, {
+      startY: 28,
+      head: historyHead,
+      body: historyBody,
+      theme: "striped",
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [102, 126, 234] }, // Warna ungu
+    });
+
+    // Simpan PDF
+    const fileName = `Laporan-AIrigasi-${deviceId}-${
+      new Date().toISOString().split("T")[0]
+    }.pdf`;
+    doc.save(fileName);
   }
 
   formatTimeAgo(dateString) {
@@ -137,11 +186,12 @@ class SimpleReportPresenter {
     const now = new Date();
     const diffMs = now - date;
     const diffMins = Math.floor(diffMs / 60000);
-    if (diffMins < 60) return `${diffMins} minutes ago`;
+    if (diffMins < 1) return "Baru saja";
+    if (diffMins < 60) return `${diffMins} menit lalu`;
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours} hours ago`;
+    if (diffHours < 24) return `${diffHours} jam lalu`;
     const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays} days ago`;
+    return `${diffDays} hari lalu`;
   }
 }
 

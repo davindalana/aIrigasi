@@ -1,3 +1,5 @@
+// src/scripts/views/pages/report-page.jsx
+
 import React, { useState, useEffect } from "react";
 import ReportTemplate from "../template/report-template";
 import SimpleReportPresenter from "../../presenters/report-presenter";
@@ -48,6 +50,10 @@ const SimpleReportPage = () => {
     setSelectedDeviceId(deviceId);
   };
 
+  const handleExportPDF = () => {
+    presenter.exportReportAsPDF(reportData, selectedDeviceId, dateRange);
+  };
+
   return (
     <ReportTemplate
       reportData={reportData}
@@ -60,6 +66,7 @@ const SimpleReportPage = () => {
       onTabChange={handleTabChange}
       onDeviceChange={handleDeviceChange}
       onRefresh={loadReport}
+      onExportPDF={handleExportPDF}
     />
   );
 };

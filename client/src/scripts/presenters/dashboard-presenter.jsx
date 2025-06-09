@@ -41,32 +41,19 @@ class DashboardPresenter {
 
       const predictionResult = await response.json();
 
+      // Objek yang dikembalikan diperbarui, confidence dihapus
       return {
         recommendation: predictionResult.message,
-        confidence: predictionResult.result === 0 ? 85 : 95,
-        modelConfidence: 93.0,
-        pumpStatus: predictionResult.result === 0 ? "OFF" : "ON",
+        pumpStatus: predictionResult.result > 0 ? "ON" : "OFF",
       };
     } catch (error) {
       console.error("Analysis request failed:", error);
+      // Objek yang dikembalikan diperbarui, confidence dihapus
       return {
         recommendation: "Error: Analysis Failed",
-        confidence: 0,
-        modelConfidence: 0,
         pumpStatus: "OFF",
       };
     }
-  }
-
-  validateSensorData(sensorData) {
-    const errors = [];
-    if (sensorData.Soil_Moisture < 0 || sensorData.Soil_Moisture > 1023) {
-      errors.push("Soil moisture must be between 0-1023");
-    }
-    return {
-      isValid: errors.length === 0,
-      errors,
-    };
   }
 }
 

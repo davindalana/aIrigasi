@@ -6,10 +6,10 @@ const AnalysisPage = () => {
   const [state, setState] = useState({
     historicalData: [],
     trendData: {},
+    // State statisticsData diperbarui
     statisticsData: {
       totalAnalyses: 0,
       wateringRecommendations: 0,
-      averageConfidence: 0,
       optimalMoistureRange: { min: 300, max: 600 },
     },
     selectedTimeRange: "7days",
@@ -75,10 +75,6 @@ const AnalysisPage = () => {
     }));
   };
 
-  const handleExportData = () => {
-    presenter.exportAnalysisData(state.historicalData, state.selectedTimeRange);
-  };
-
   return (
     <AnalysisTemplate
       historicalData={state.historicalData}
@@ -90,7 +86,6 @@ const AnalysisPage = () => {
       isLoading={state.isLoading}
       onTimeRangeChange={handleTimeRangeChange}
       onDeviceChange={handleDeviceChange}
-      onExportData={handleExportData}
     />
   );
 };

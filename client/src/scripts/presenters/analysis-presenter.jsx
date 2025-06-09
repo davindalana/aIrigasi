@@ -4,14 +4,28 @@ class AnalysisPresenter {
   }
 
   mapApiDataToTemplate(apiData) {
+    let recommendation = "Tidak perlu siram";
+    let recommendationLevel = 0; // Untuk grafik
+    const moisture = apiData.Soil_Moisture;
+
+    if (moisture < 200) {
+      recommendation = "Siram Banyak";
+      recommendationLevel = 3;
+    } else if (moisture < 400) {
+      recommendation = "Siram Sedang";
+      recommendationLevel = 2;
+    } else if (moisture < 600) {
+      recommendation = "Siram Sedikit";
+      recommendationLevel = 1;
+    }
+
     return {
       date: new Date(apiData.timestamp).toISOString().split("T")[0],
       soilMoisture: apiData.Soil_Moisture,
       temperature: apiData.Temperature,
       humidity: apiData.Air_Humidity,
-      recommendation:
-        apiData.Soil_Moisture < 400 ? "WATERING NEEDED" : "NO WATERING NEEDED",
-      confidence: 80 + Math.random() * 15,
+      recommendation: recommendation,
+      recommendationLevel: recommendationLevel, // Tambahkan level untuk grafik
       timestamp: new Date(apiData.timestamp).getTime(),
     };
   }
@@ -76,21 +90,16 @@ class AnalysisPresenter {
       return {
         totalAnalyses: 0,
         wateringRecommendations: 0,
-        averageConfidence: 0,
         optimalMoistureRange: { min: 300, max: 600 },
       };
     }
     const wateringRecommendations = historicalData.filter(
-      (d) => d.recommendation === "WATERING NEEDED"
+      (d) => d.recommendationLevel > 0 // Setiap rekomendasi penyiraman
     ).length;
-    const avgConfidence =
-      historicalData.reduce((sum, d) => sum + d.confidence, 0) /
-      historicalData.length;
 
     return {
       totalAnalyses: historicalData.length,
       wateringRecommendations,
-      averageConfidence: Math.round(avgConfidence * 10) / 10,
       optimalMoistureRange: { min: 300, max: 600 },
     };
   }
@@ -125,34 +134,12 @@ class AnalysisPresenter {
   }
 
   calculateWateringFrequency(data) {
-    const wateringDays = data.filter(
-      (d) => d.recommendation === "WATERING NEEDED"
-    ).length;
+    const wateringDays = data.filter((d) => d.recommendationLevel > 0).length;
     return {
       total: wateringDays,
       percentage: Math.round((wateringDays / data.length) * 100) || 0,
       averageInterval: data.length / (wateringDays || 1),
     };
-  }
-
-  exportAnalysisData(historicalData, timeRange) {
-    const csvData = this.convertToCSV(historicalData);
-    const blob = new Blob([csvData], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `plant-analysis-${timeRange}-${
-      new Date().toISOString().split("T")[0]
-    }.csv`;
-    link.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  convertToCSV(data) {
-    if (!data || data.length === 0) return "";
-    const headers = Object.keys(data[0]).join(",");
-    const rows = data.map((row) => Object.values(row).join(",")).join("\n");
-    return `${headers}\n${rows}`;
   }
 }
 

@@ -19,6 +19,24 @@ const DashboardTemplate = ({
   const pumpStatusClass = pumpStatus === "ON" ? "pump-on" : "pump-off";
   const pumpStatusText = pumpStatus === "ON" ? "Pump ON" : "Pump OFF";
 
+  // Fungsi bantuan untuk mendapatkan kelas untuk teks rekomendasi
+  const getDecisionClass = (recommendation) => {
+    if (!recommendation) return "decision-text-default";
+    if (recommendation.includes("Tidak perlu siram")) {
+      return "decision-text-no-water";
+    }
+    if (recommendation.includes("Siram Sedikit")) {
+      return "decision-text-water-low";
+    }
+    if (recommendation.includes("Siram Sedang")) {
+      return "decision-text-water-medium";
+    }
+    if (recommendation.includes("Siram Banyak")) {
+      return "decision-text-water-high";
+    }
+    return "decision-text-default";
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -111,31 +129,15 @@ const DashboardTemplate = ({
           <div className="decision-icon">🧠</div>
           <div className="decision-content">
             <h3
-              className={`decision-text ${
-                aiDecision.recommendation?.includes("Tidak")
-                  ? "no-water"
-                  : "water-needed"
-              }`}
+              className={`decision-text ${getDecisionClass(
+                aiDecision.recommendation
+              )}`}
             >
               {aiDecision.recommendation}
             </h3>
             <p className="decision-subtitle">AI Decision</p>
           </div>
-          <div className="confidence-badge">
-            <span className="confidence-label">Confidence</span>
-            <span className="confidence-value">{aiDecision.confidence}%</span>
-          </div>
-        </div>
-
-        <div
-          className={`confidence-bar ${
-            aiDecision.recommendation?.includes("Tidak") ? "orange" : "green"
-          }`}
-        >
-          <div
-            className="confidence-fill"
-            style={{ width: `${aiDecision.confidence}%` }}
-          ></div>
+          {/* Lencana dan Bilah Confidence Dihapus */}
         </div>
       </div>
 
@@ -166,12 +168,7 @@ const DashboardTemplate = ({
           <div className="sensor-value">{sensorData.Air_Humidity}</div>
           <div className="sensor-unit">%</div>
         </div>
-
-        <div className="sensor-card">
-          <h4>MODEL CONFIDENCE</h4>
-          <div className="sensor-value">{aiDecision.modelConfidence}</div>
-          <div className="sensor-unit">%</div>
-        </div>
+        {/* Kartu Model Confidence Dihapus */}
       </div>
     </div>
   );

@@ -44,7 +44,7 @@
 
 @media (min-width: 1024px) {
   .sensor-inputs {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -124,14 +124,6 @@
   letter-spacing: 1px;
 }
 
-.decision-text.no-water {
-  color: #ff9800;
-}
-
-.decision-text.water-needed {
-  color: #4caf50;
-}
-
 .decision-subtitle {
   color: #666;
   margin: 0.25rem 0 0 0;
@@ -140,21 +132,31 @@
 }
 
 .confidence-badge {
-  text-align: right;
-  min-width: 120px;
+  display: none;
 }
 
-.confidence-label {
-  display: block;
-  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+.confidence-bar {
+  display: none;
+}
+
+.decision-text-default {
   color: #666;
-  margin-bottom: 0.25rem;
 }
 
-.confidence-value {
-  font-size: clamp(1.2rem, 3vw, 1.5rem);
-  font-weight: 700;
-  color: #333;
+.decision-text-no-water {
+  color: #ff9800; /* Orange for no water */
+}
+
+.decision-text-water-low {
+  color: #2196f3; /* Blue for low amount */
+}
+
+.decision-text-water-medium {
+  color: #4caf50; /* Green for medium amount */
+}
+
+.decision-text-water-high {
+  color: #f44336; /* Red for high amount */
 }
 
 .sensor-display {
@@ -173,7 +175,7 @@
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .sensor-display {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -245,10 +247,6 @@
     gap: 1rem;
   }
 
-  .confidence-badge {
-    text-align: center;
-  }
-
   .sensor-input-card,
   .ai-decision-card,
   .weather-card,
@@ -282,21 +280,22 @@
   }
 }
 
+/* === BAGIAN YANG DIPERBAIKI === */
 @media (min-width: 1400px) {
   .dashboard {
     max-width: 1600px;
   }
 
   .sensor-inputs {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* Tetap 3 karena ada 3 input */
   }
 
   .sensor-display {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* Diubah dari 5 menjadi 4 */
   }
 
   .weather-grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* Diubah dari 5 menjadi 4 */
   }
 }
 

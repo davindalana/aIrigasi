@@ -1,11 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import "../../../styles/pages/analysis.css";
-import "../../../styles/components/cards.css";
-import "../../../styles/components/forms.css";
-import "../../../styles/components/charts.css";
-import "../../../styles/components/tables.css";
-import "../../../styles/components/buttons.css";
-import "../../../styles/components/loading.css";
 import {
   Chart,
   LineElement,
@@ -35,7 +29,6 @@ const AnalysisTemplate = ({
   isLoading,
   onTimeRangeChange,
   onDeviceChange,
-  onExportData,
 }) => {
   const moistureChartRef = useRef(null);
   const temperatureChartRef = useRef(null);
@@ -216,14 +209,12 @@ const AnalysisTemplate = ({
             labels: dates,
             datasets: [
               {
-                label: "Watering Needed",
-                data: historicalData.map((data) =>
-                  data.recommendation === "WATERING NEEDED" ? 1 : 0
-                ),
+                label: "Watering Level",
+                data: historicalData.map((data) => data.recommendationLevel),
                 borderColor: "#9c27b0",
                 backgroundColor: "rgba(156, 39, 176, 0.2)",
                 tension: 0.3,
-                stepSize: 1,
+                stepped: true,
               },
             ],
           },
@@ -233,16 +224,17 @@ const AnalysisTemplate = ({
             scales: {
               y: {
                 beginAtZero: true,
-                max: 1.1,
+                max: 3.5,
                 ticks: {
                   callback: function (value) {
-                    return value === 1 ? "Needed" : "Not Needed";
+                    const labels = ["No Water", "Low", "Medium", "High"];
+                    return labels[value] || "";
                   },
                   stepSize: 1,
                 },
                 title: {
                   display: true,
-                  text: "Watering Status",
+                  text: "Watering Level",
                 },
               },
               x: {
@@ -256,9 +248,13 @@ const AnalysisTemplate = ({
               tooltip: {
                 callbacks: {
                   label: function (context) {
-                    return `Watering: ${
-                      context.raw === 1 ? "Needed" : "Not Needed"
-                    }`;
+                    const labels = [
+                      "Tidak perlu siram",
+                      "Siram Sedikit",
+                      "Siram Sedang",
+                      "Siram Banyak",
+                    ];
+                    return `Watering: ${labels[context.raw] || "Unknown"}`;
                   },
                 },
               },
@@ -312,9 +308,10 @@ const AnalysisTemplate = ({
   };
 
   const getRecommendationClass = (recommendation) => {
-    return recommendation === "WATERING NEEDED"
-      ? "recommendation-warning"
-      : "recommendation-success";
+    if (recommendation.includes("Banyak")) return "recommendation-banyak";
+    if (recommendation.includes("Sedang")) return "recommendation-sedang";
+    if (recommendation.includes("Sedikit")) return "recommendation-sedikit";
+    return "recommendation-aman";
   };
 
   if (isLoading) {
@@ -361,9 +358,6 @@ const AnalysisTemplate = ({
               <option value="90days">Last 90 Days</option>
             </select>
           </div>
-          <button onClick={onExportData} className="export-btn">
-            📊 Export Data
-          </button>
         </div>
       </div>
 
@@ -385,15 +379,6 @@ const AnalysisTemplate = ({
               {statisticsData.wateringRecommendations}
             </p>
             <small>Days requiring water</small>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon">🎯</div>
-          <div className="stat-content">
-            <h3>Average Confidence</h3>
-            <p className="stat-number">{statisticsData.averageConfidence}%</p>
-            <small>Prediction accuracy</small>
           </div>
         </div>
 
@@ -458,7 +443,6 @@ const AnalysisTemplate = ({
                 <span>Temp (°C)</span>
                 <span>Humidity (%)</span>
                 <span>Recommendation</span>
-                <span>Confidence</span>
               </div>
               {historicalData &&
                 historicalData
@@ -485,7 +469,6 @@ const AnalysisTemplate = ({
                       >
                         {data.recommendation}
                       </span>
-                      <span>{data.confidence}%</span>
                     </div>
                   ))}
             </div>
@@ -657,23 +640,20 @@ const AnalysisTemplate = ({
                     You needed to water your plant{" "}
                     <strong>
                       {
-                        historicalData.filter(
-                          (d) => d.recommendation === "WATERING NEEDED"
-                        ).length
+                        historicalData.filter((d) => d.recommendationLevel > 0)
+                          .length
                       }
                     </strong>{" "}
                     out of {historicalData.length} days (
                     {Math.round(
-                      (historicalData.filter(
-                        (d) => d.recommendation === "WATERING NEEDED"
-                      ).length /
+                      (historicalData.filter((d) => d.recommendationLevel > 0)
+                        .length /
                         historicalData.length) *
                         100
                     )}
                     % ). This indicates{" "}
-                    {historicalData.filter(
-                      (d) => d.recommendation === "WATERING NEEDED"
-                    ).length /
+                    {historicalData.filter((d) => d.recommendationLevel > 0)
+                      .length /
                       historicalData.length >
                     0.7
                       ? "frequent watering needs - consider soil improvement or larger pot"

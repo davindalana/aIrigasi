@@ -3,7 +3,7 @@
   margin: 0 auto;
   padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
 }
 
@@ -93,16 +93,26 @@
   font-weight: 600;
 }
 
-.recommendation-warning {
-  color: #d69e2e;
+/* New recommendation classes */
+.recommendation-aman {
+  /* Tidak perlu siram */
+  color: #38a169; /* Green */
   font-weight: 600;
-  font-size: 0.8rem;
 }
-
-.recommendation-success {
-  color: #38a169;
+.recommendation-sedikit {
+  /* Siram Sedikit */
+  color: #3182ce; /* Blue */
   font-weight: 600;
-  font-size: 0.8rem;
+}
+.recommendation-sedang {
+  /* Siram Sedang */
+  color: #d69e2e; /* Yellow/Orange */
+  font-weight: 600;
+}
+.recommendation-banyak {
+  /* Siram Banyak */
+  color: #e53e3e; /* Red */
+  font-weight: 600;
 }
 
 .trend-cards {
@@ -184,6 +194,14 @@
 
   .analysis-header h1 {
     font-size: 2rem;
+  }
+
+  .analysis-controls {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
   }
 
   .statistics-grid {
