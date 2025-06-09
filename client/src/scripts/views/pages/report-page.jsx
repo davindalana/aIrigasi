@@ -7,13 +7,17 @@ const SimpleReportPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState("7days");
   const [activeTab, setActiveTab] = useState("summary");
-  const [selectedDeviceId, setSelectedDeviceId] = useState("device1");
+  const [selectedDeviceId, setSelectedDeviceId] = useState(
+    "esp8266-AIrigasi-02"
+  );
 
   const presenter = new SimpleReportPresenter();
 
-  useEffect(() => {
-    loadReport();
-  }, [dateRange, selectedDeviceId]);
+  const deviceIds = [
+    "esp8266-AIrigasi-01",
+    "esp8266-AIrigasi-02",
+    "esp8266-AIrigasi-03",
+  ];
 
   const loadReport = async () => {
     setIsLoading(true);
@@ -22,10 +26,15 @@ const SimpleReportPage = () => {
       setReportData(data);
     } catch (error) {
       console.error("Error loading report:", error);
+      setReportData(null);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadReport();
+  }, [dateRange, selectedDeviceId]);
 
   const handleDateRangeChange = (range) => {
     setDateRange(range);
@@ -46,6 +55,7 @@ const SimpleReportPage = () => {
       dateRange={dateRange}
       activeTab={activeTab}
       selectedDeviceId={selectedDeviceId}
+      deviceIds={deviceIds}
       onDateRangeChange={handleDateRangeChange}
       onTabChange={handleTabChange}
       onDeviceChange={handleDeviceChange}

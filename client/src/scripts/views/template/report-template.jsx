@@ -1,4 +1,3 @@
-// src/scripts/views/template/report-template.jsx
 import React from "react";
 import "../../../styles/pages/report.css";
 import "../../../styles/components/buttons.css";
@@ -14,8 +13,11 @@ const ReportTemplate = ({
   isLoading,
   dateRange,
   activeTab,
+  selectedDeviceId,
+  deviceIds,
   onDateRangeChange,
   onTabChange,
+  onDeviceChange,
   onRefresh,
 }) => {
   if (isLoading) {
@@ -33,7 +35,14 @@ const ReportTemplate = ({
     return (
       <div className="report-container">
         <div className="loading-container">
-          <p>No data available</p>
+          <p>No data available for the selected device and date range.</p>
+          <button
+            className="btn btn-primary"
+            onClick={onRefresh}
+            style={{ marginTop: "1rem" }}
+          >
+            🔄 Try Again
+          </button>
         </div>
       </div>
     );
@@ -48,6 +57,18 @@ const ReportTemplate = ({
             <p>Smart Irrigation Analytics</p>
           </div>
           <div className="header-actions">
+            <select
+              className="date-select"
+              value={selectedDeviceId}
+              onChange={(e) => onDeviceChange(e.target.value)}
+            >
+              {deviceIds &&
+                deviceIds.map((id) => (
+                  <option key={id} value={id}>
+                    {id}
+                  </option>
+                ))}
+            </select>
             <select
               className="date-select"
               value={dateRange}
@@ -197,15 +218,16 @@ const AnalyticsTab = ({ data }) => (
       </div>
       <div className="chart-container">
         <div className="simple-chart">
-          {data.dailyTrends.map((day, index) => (
-            <div key={index} className="chart-bar">
-              <div
-                className="bar-fill"
-                style={{ height: `${(day.analyses / 10) * 100}%` }}
-              ></div>
-              <span className="bar-label">{day.date.split("-")[2]}</span>
-            </div>
-          ))}
+          {data.dailyTrends &&
+            data.dailyTrends.map((day, index) => (
+              <div key={index} className="chart-bar">
+                <div
+                  className="bar-fill"
+                  style={{ height: `${(day.analyses / 10) * 100}%` }}
+                ></div>
+                <span className="bar-label">{day.date.split("-")[2]}</span>
+              </div>
+            ))}
         </div>
       </div>
     </div>

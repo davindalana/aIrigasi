@@ -1,148 +1,107 @@
 class AnalysisPresenter {
   constructor() {
-    this.dataService = this.initDataService();
+    this.apiUrl = "https://airigasi-production.up.railway.app/api";
   }
 
-  initDataService() {
+  mapApiDataToTemplate(apiData) {
     return {
-      generateHistoricalData: (timeRange, deviceId) => {
-        const days = this.getTimeRangeDays(timeRange);
-        const data = [];
+      date: new Date(apiData.timestamp).toISOString().split("T")[0],
+      soilMoisture: apiData.Soil_Moisture,
+      temperature: apiData.Temperature,
+      humidity: apiData.Air_Humidity,
+      recommendation:
+        apiData.Soil_Moisture < 400 ? "WATERING NEEDED" : "NO WATERING NEEDED",
+      confidence: 80 + Math.random() * 15,
+      timestamp: new Date(apiData.timestamp).getTime(),
+    };
+  }
 
-        for (let i = days; i >= 0; i--) {
-          const date = new Date();
-          date.setDate(date.getDate() - i);
+  async getHistoricalData(timeRange = "7days", deviceId) {
+    try {
+      const response = await fetch(`${this.apiUrl}/sensors`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const allData = await response.json();
 
-          let soilMoisture, temperature, humidity;
-          let needsWatering;
-          let confidence = 70 + Math.random() * 25;
+      const days = this.getTimeRangeDays(timeRange);
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - days);
 
-          if (deviceId === "device2") {
-            soilMoisture = 150 + Math.random() * 500;
-            temperature = 25 + Math.random() * 15;
-            humidity = 30 + Math.random() * 50;
-            needsWatering =
-              soilMoisture < 250 || (soilMoisture < 400 && temperature > 32);
-          } else if (deviceId === "device3") {
-            soilMoisture = 300 + Math.random() * 400;
-            temperature = 22 + Math.random() * 8;
-            humidity = 50 + Math.random() * 30;
-            needsWatering = soilMoisture < 380;
-          } else {
-            soilMoisture = 200 + Math.random() * 600;
-            temperature = 20 + Math.random() * 20;
-            humidity = 40 + Math.random() * 40;
-            needsWatering =
-              soilMoisture < 350 || (soilMoisture < 450 && temperature > 30);
-          }
+      const filteredData = allData
+        .filter((d) => {
+          const recordDate = new Date(d.timestamp);
+          return (
+            d.device_id === deviceId &&
+            recordDate >= startDate &&
+            recordDate <= endDate
+          );
+        })
+        .map(this.mapApiDataToTemplate)
+        .sort((a, b) => a.timestamp - b.timestamp);
 
-          data.push({
-            date: date.toISOString().split("T")[0],
-            soilMoisture: Math.round(soilMoisture),
-            temperature: Math.round(temperature * 10) / 10,
-            humidity: Math.round(humidity),
-            recommendation: needsWatering
-              ? "WATERING NEEDED"
-              : "NO WATERING NEEDED",
-            confidence: Math.round(confidence * 10) / 10,
-            timestamp: date.getTime(),
-          });
-        }
+      return filteredData;
+    } catch (error) {
+      console.error("Error getting historical data:", error);
+      return [];
+    }
+  }
 
-        return data;
-      },
+  async getTrendData(timeRange = "7days", deviceId) {
+    const historicalData = await this.getHistoricalData(timeRange, deviceId);
+    if (historicalData.length === 0) {
+      return {
+        moistureTrend: "stable",
+        temperatureTrend: "stable",
+        humidityTrend: "stable",
+        wateringFrequency: { total: 0, percentage: 0, averageInterval: 0 },
+      };
+    }
+    return {
+      moistureTrend: this.calculateTrend(
+        historicalData.map((d) => d.soilMoisture)
+      ),
+      temperatureTrend: this.calculateTrend(
+        historicalData.map((d) => d.temperature)
+      ),
+      humidityTrend: this.calculateTrend(historicalData.map((d) => d.humidity)),
+      wateringFrequency: this.calculateWateringFrequency(historicalData),
+    };
+  }
 
-      generateTrendData: (historicalData) => {
-        return {
-          moistureTrend: this.calculateTrend(
-            historicalData.map((d) => d.soilMoisture)
-          ),
-          temperatureTrend: this.calculateTrend(
-            historicalData.map((d) => d.temperature)
-          ),
-          humidityTrend: this.calculateTrend(
-            historicalData.map((d) => d.humidity)
-          ),
-          wateringFrequency: this.calculateWateringFrequency(historicalData),
-        };
-      },
+  async getStatisticsData(timeRange = "7days", deviceId) {
+    const historicalData = await this.getHistoricalData(timeRange, deviceId);
+    if (historicalData.length === 0) {
+      return {
+        totalAnalyses: 0,
+        wateringRecommendations: 0,
+        averageConfidence: 0,
+        optimalMoistureRange: { min: 300, max: 600 },
+      };
+    }
+    const wateringRecommendations = historicalData.filter(
+      (d) => d.recommendation === "WATERING NEEDED"
+    ).length;
+    const avgConfidence =
+      historicalData.reduce((sum, d) => sum + d.confidence, 0) /
+      historicalData.length;
 
-      generateInsights: (historicalData, trendData) => {
-        const insights = [];
-        const avgMoisture =
-          historicalData.reduce((sum, d) => sum + d.soilMoisture, 0) /
-          historicalData.length;
-        const avgTemp =
-          historicalData.reduce((sum, d) => sum + d.temperature, 0) /
-          historicalData.length;
-        const wateringDays = historicalData.filter(
-          (d) => d.recommendation === "WATERING NEEDED"
-        ).length;
-
-        if (avgMoisture < 300) {
-          insights.push({
-            type: "warning",
-            title: "Low Soil Moisture",
-            message:
-              "Your soil moisture levels are consistently low. Consider increasing watering frequency.",
-            priority: "high",
-          });
-        } else if (avgMoisture > 600) {
-          insights.push({
-            type: "info",
-            title: "High Soil Moisture",
-            message:
-              "Soil moisture levels are high. Monitor for potential overwatering.",
-            priority: "medium",
-          });
-        }
-
-        if (avgTemp > 35) {
-          insights.push({
-            type: "warning",
-            title: "High Temperature Alert",
-            message:
-              "Temperature levels are high. Plants may need more frequent watering.",
-            priority: "high",
-          });
-        }
-
-        const wateringPercentage = (wateringDays / historicalData.length) * 100;
-        if (wateringPercentage > 70) {
-          insights.push({
-            type: "info",
-            title: "Frequent Watering Needed",
-            message: `${Math.round(
-              wateringPercentage
-            )}% of days required watering. Consider soil improvement.`,
-            priority: "medium",
-          });
-        }
-
-        if (trendData.moistureTrend === "decreasing") {
-          insights.push({
-            type: "warning",
-            title: "Declining Moisture Trend",
-            message: "Soil moisture is trending downward. Monitor closely.",
-            priority: "medium",
-          });
-        }
-
-        return insights;
-      },
+    return {
+      totalAnalyses: historicalData.length,
+      wateringRecommendations,
+      averageConfidence: Math.round(avgConfidence * 10) / 10,
+      optimalMoistureRange: { min: 300, max: 600 },
     };
   }
 
   getTimeRangeDays(timeRange) {
     switch (timeRange) {
       case "7days":
-      case "7d":
         return 7;
       case "30days":
-      case "30d":
         return 30;
       case "90days":
-      case "90d":
         return 90;
       default:
         return 7;
@@ -151,15 +110,12 @@ class AnalysisPresenter {
 
   calculateTrend(values) {
     if (values.length < 2) return "stable";
-
     const firstHalf = values.slice(0, Math.floor(values.length / 2));
     const secondHalf = values.slice(Math.floor(values.length / 2));
-
     const firstAvg =
       firstHalf.reduce((sum, val) => sum + val, 0) / firstHalf.length;
     const secondAvg =
       secondHalf.reduce((sum, val) => sum + val, 0) / secondHalf.length;
-
     const difference = secondAvg - firstAvg;
     const threshold = firstAvg * 0.1;
 
@@ -174,153 +130,28 @@ class AnalysisPresenter {
     ).length;
     return {
       total: wateringDays,
-      percentage: Math.round((wateringDays / data.length) * 100),
+      percentage: Math.round((wateringDays / data.length) * 100) || 0,
       averageInterval: data.length / (wateringDays || 1),
     };
   }
 
-  async getHistoricalData(timeRange = "7days", deviceId) {
-    try {
-      return this.dataService.generateHistoricalData(timeRange, deviceId);
-    } catch (error) {
-      console.error("Error getting historical data:", error);
-      throw error;
-    }
-  }
-
-  async getTrendData(timeRange = "7days", deviceId) {
-    try {
-      const historicalData = this.dataService.generateHistoricalData(
-        timeRange,
-        deviceId
-      );
-      return this.dataService.generateTrendData(historicalData);
-    } catch (error) {
-      console.error("Error getting trend data:", error);
-      throw error;
-    }
-  }
-
-  async getStatisticsData(timeRange = "7days", deviceId) {
-    try {
-      const historicalData = this.dataService.generateHistoricalData(
-        timeRange,
-        deviceId
-      );
-      const wateringRecommendations = historicalData.filter(
-        (d) => d.recommendation === "WATERING NEEDED"
-      ).length;
-      const avgConfidence =
-        historicalData.reduce((sum, d) => sum + d.confidence, 0) /
-        historicalData.length;
-
-      return {
-        totalAnalyses: historicalData.length,
-        wateringRecommendations,
-        averageConfidence: Math.round(avgConfidence * 10) / 10,
-        optimalMoistureRange: { min: 300, max: 600 },
-      };
-    } catch (error) {
-      console.error("Error getting statistics data:", error);
-      throw error;
-    }
-  }
-
   exportAnalysisData(historicalData, timeRange) {
-    try {
-      const csvData = this.convertToCSV(historicalData);
-      const blob = new Blob([csvData], { type: "text/csv" });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `plant-analysis-${timeRange}-${
-        new Date().toISOString().split("T")[0]
-      }.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error exporting data:", error);
-      throw error;
-    }
-  }
-
-  async loadAnalysisData(timeRange = "7d", deviceId) {
-    try {
-      const historicalData = this.dataService.generateHistoricalData(
-        timeRange,
-        deviceId
-      );
-      const trendData = this.dataService.generateTrendData(historicalData);
-      const insights = this.dataService.generateInsights(
-        historicalData,
-        trendData
-      );
-
-      return {
-        historical: historicalData,
-        trends: trendData,
-        insights: insights,
-        summary: this.generateSummary(historicalData, trendData, insights),
-      };
-    } catch (error) {
-      console.error("Error loading analysis data:", error);
-      throw error;
-    }
-  }
-
-  generateSummary(historical, trends, insights) {
-    const avgMoisture = Math.round(
-      historical.reduce((sum, d) => sum + d.soilMoisture, 0) / historical.length
-    );
-    const avgTemp =
-      Math.round(
-        (historical.reduce((sum, d) => sum + d.temperature, 0) /
-          historical.length) *
-          10
-      ) / 10;
-    const wateringNeeded = historical.filter(
-      (d) => d.recommendation === "WATERING NEEDED"
-    ).length;
-
-    return {
-      averageMoisture: avgMoisture,
-      averageTemperature: avgTemp,
-      totalWateringDays: wateringNeeded,
-      criticalInsights: insights.filter((i) => i.priority === "high").length,
-      overallTrend: this.getOverallTrend(trends),
-    };
-  }
-
-  getOverallTrend(trends) {
-    const trendValues = [
-      trends.moistureTrend,
-      trends.temperatureTrend,
-      trends.humidityTrend,
-    ];
-    const increasing = trendValues.filter((t) => t === "increasing").length;
-    const decreasing = trendValues.filter((t) => t === "decreasing").length;
-
-    if (increasing > decreasing) return "improving";
-    if (decreasing > increasing) return "declining";
-    return "stable";
-  }
-
-  formatDataForChart(data, metric) {
-    return data.map((item) => ({
-      x: item.date,
-      y: item[metric],
-      label: item.date,
-    }));
+    const csvData = this.convertToCSV(historicalData);
+    const blob = new Blob([csvData], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `plant-analysis-${timeRange}-${
+      new Date().toISOString().split("T")[0]
+    }.csv`;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 
   convertToCSV(data) {
     if (!data || data.length === 0) return "";
-
     const headers = Object.keys(data[0]).join(",");
     const rows = data.map((row) => Object.values(row).join(",")).join("\n");
-
     return `${headers}\n${rows}`;
   }
 }

@@ -31,6 +31,7 @@ const AnalysisTemplate = ({
   statisticsData,
   selectedTimeRange,
   selectedDeviceId,
+  deviceIds,
   isLoading,
   onTimeRangeChange,
   onDeviceChange,
@@ -339,9 +340,12 @@ const AnalysisTemplate = ({
               onChange={(e) => onDeviceChange(e.target.value)}
               className="time-range-select device-select"
             >
-              <option value="device1">Device 1</option>
-              <option value="device2">Device 2</option>
-              <option value="device3">Device 3</option>
+              {deviceIds &&
+                deviceIds.map((id) => (
+                  <option key={id} value={id}>
+                    {id}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -456,33 +460,34 @@ const AnalysisTemplate = ({
                 <span>Recommendation</span>
                 <span>Confidence</span>
               </div>
-              {historicalData
-                .slice(-5)
-                .reverse()
-                .map((data, index) => (
-                  <div key={index} className="table-row">
-                    <span>{data.date}</span>
-                    <span
-                      className={
-                        data.soilMoisture < 300
-                          ? "low-moisture"
-                          : data.soilMoisture > 600
-                          ? "high-moisture"
-                          : "normal-moisture"
-                      }
-                    >
-                      {data.soilMoisture}
-                    </span>
-                    <span>{data.temperature}°</span>
-                    <span>{data.humidity}%</span>
-                    <span
-                      className={getRecommendationClass(data.recommendation)}
-                    >
-                      {data.recommendation}
-                    </span>
-                    <span>{data.confidence}%</span>
-                  </div>
-                ))}
+              {historicalData &&
+                historicalData
+                  .slice(-5)
+                  .reverse()
+                  .map((data, index) => (
+                    <div key={index} className="table-row">
+                      <span>{data.date}</span>
+                      <span
+                        className={
+                          data.soilMoisture < 300
+                            ? "low-moisture"
+                            : data.soilMoisture > 600
+                            ? "high-moisture"
+                            : "normal-moisture"
+                        }
+                      >
+                        {data.soilMoisture}
+                      </span>
+                      <span>{data.temperature}°</span>
+                      <span>{data.humidity}%</span>
+                      <span
+                        className={getRecommendationClass(data.recommendation)}
+                      >
+                        {data.recommendation}
+                      </span>
+                      <span>{data.confidence}%</span>
+                    </div>
+                  ))}
             </div>
           </div>
         </div>
@@ -559,15 +564,15 @@ const AnalysisTemplate = ({
             <div className="frequency-stats">
               <div className="frequency-item">
                 <strong>Total Watering Days:</strong>{" "}
-                {trendData.wateringFrequency.total}
+                {trendData.wateringFrequency?.total}
               </div>
               <div className="frequency-item">
                 <strong>Percentage:</strong>{" "}
-                {trendData.wateringFrequency.percentage}%
+                {trendData.wateringFrequency?.percentage}%
               </div>
               <div className="frequency-item">
                 <strong>Average Interval:</strong>{" "}
-                {Math.round(trendData.wateringFrequency.averageInterval)} days
+                {Math.round(trendData.wateringFrequency?.averageInterval)} days
               </div>
             </div>
           </div>
@@ -577,7 +582,7 @@ const AnalysisTemplate = ({
       <div className="insights-section">
         <h2>💡 Smart Insights</h2>
         <div className="insights-grid">
-          {historicalData.length > 0 ? (
+          {historicalData && historicalData.length > 0 ? (
             <>
               <div className="insight-card">
                 <div className="insight-icon">🌱</div>

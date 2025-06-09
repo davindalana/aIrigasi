@@ -7,11 +7,11 @@ import "../../../styles/components/charts.css";
 
 const DashboardTemplate = ({
   sensorData,
-  weatherData,
   aiDecision,
   pumpStatus,
   isLoading,
   selectedDeviceId,
+  deviceIds,
   onSensorChange,
   onAnalyze,
   onDeviceChange,
@@ -37,16 +37,19 @@ const DashboardTemplate = ({
             value={selectedDeviceId}
             onChange={(e) => onDeviceChange(e.target.value)}
           >
-            <option value="device1">Device 1</option>
-            <option value="device2">Device 2</option>
-            <option value="device3">Device 3</option>
+            {deviceIds &&
+              deviceIds.map((id) => (
+                <option key={id} value={id}>
+                  {id}
+                </option>
+              ))}
           </select>
         </div>
       </div>
 
       <div className="card sensor-input-card">
         <div className="card-header">
-          📊 <span>Sensor Data Input</span>
+          📊 <span>Sensor Data (Real-time)</span>
         </div>
 
         <div className="sensor-inputs">
@@ -55,12 +58,13 @@ const DashboardTemplate = ({
             <input
               type="number"
               className="sensor-input"
-              value={sensorData.soilMoisture}
+              value={sensorData.Soil_Moisture}
               onChange={(e) =>
-                onSensorChange("soilMoisture", parseInt(e.target.value) || 0)
+                onSensorChange("Soil_Moisture", parseInt(e.target.value) || 0)
               }
               min="0"
               max="1023"
+              readOnly
             />
           </div>
 
@@ -69,10 +73,11 @@ const DashboardTemplate = ({
             <input
               type="number"
               className="sensor-input"
-              value={sensorData.temperature}
+              value={sensorData.Temperature}
               onChange={(e) =>
-                onSensorChange("temperature", parseInt(e.target.value) || 0)
+                onSensorChange("Temperature", parseInt(e.target.value) || 0)
               }
+              readOnly
             />
           </div>
 
@@ -81,12 +86,13 @@ const DashboardTemplate = ({
             <input
               type="number"
               className="sensor-input"
-              value={sensorData.airHumidity}
+              value={sensorData.Air_Humidity}
               onChange={(e) =>
-                onSensorChange("airHumidity", parseInt(e.target.value) || 0)
+                onSensorChange("Air_Humidity", parseInt(e.target.value) || 0)
               }
               min="0"
               max="100"
+              readOnly
             />
           </div>
         </div>
@@ -102,11 +108,11 @@ const DashboardTemplate = ({
 
       <div className="card ai-decision-card">
         <div className="decision-header">
-          <div className="decision-icon">⏸️</div>
+          <div className="decision-icon">🧠</div>
           <div className="decision-content">
             <h3
               className={`decision-text ${
-                aiDecision.recommendation.includes("NO")
+                aiDecision.recommendation?.includes("Tidak")
                   ? "no-water"
                   : "water-needed"
               }`}
@@ -123,7 +129,7 @@ const DashboardTemplate = ({
 
         <div
           className={`confidence-bar ${
-            aiDecision.recommendation.includes("NO") ? "orange" : "green"
+            aiDecision.recommendation?.includes("Tidak") ? "orange" : "green"
           }`}
         >
           <div
@@ -145,19 +151,19 @@ const DashboardTemplate = ({
 
         <div className="sensor-card">
           <h4>SOIL MOISTURE</h4>
-          <div className="sensor-value">{sensorData.soilMoisture}</div>
+          <div className="sensor-value">{sensorData.Soil_Moisture}</div>
           <div className="sensor-unit">units</div>
         </div>
 
         <div className="sensor-card">
           <h4>TEMPERATURE</h4>
-          <div className="sensor-value">{sensorData.temperature}.0</div>
+          <div className="sensor-value">{sensorData.Temperature}</div>
           <div className="sensor-unit">°C</div>
         </div>
 
         <div className="sensor-card">
           <h4>AIR HUMIDITY</h4>
-          <div className="sensor-value">{sensorData.airHumidity}.0</div>
+          <div className="sensor-value">{sensorData.Air_Humidity}</div>
           <div className="sensor-unit">%</div>
         </div>
 
@@ -166,47 +172,6 @@ const DashboardTemplate = ({
           <div className="sensor-value">{aiDecision.modelConfidence}</div>
           <div className="sensor-unit">%</div>
         </div>
-      </div>
-
-      <div className="card weather-card">
-        <div className="card-header">
-          🌤️ <span>Weather Conditions</span>
-        </div>
-
-        <div className="weather-grid">
-          <div className="weather-item">
-            <div className="weather-label">Rain Forecast</div>
-            <div className="weather-value">{weatherData.rainForecast}</div>
-          </div>
-
-          <div className="weather-item">
-            <div className="weather-label">Rain Amount</div>
-            <div className="weather-value">{weatherData.rainAmount} mm</div>
-          </div>
-
-          <div className="weather-item">
-            <div className="weather-label">Weather Temp</div>
-            <div className="weather-value">{weatherData.weatherTemp}°C</div>
-          </div>
-
-          <div className="weather-item">
-            <div className="weather-label">Weather Humidity</div>
-            <div className="weather-value">{weatherData.weatherHumidity}%</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="card explanation-card">
-        <div className="card-header">
-          🧠 <span>AI Decision Explanation</span>
-        </div>
-        <p className="explanation-text">
-          Model analysis shows {aiDecision.recommendation.toLowerCase()} with{" "}
-          {aiDecision.confidence}% confidence.
-          {weatherData.rainForecast === "No"
-            ? " No rain expected, maintaining irrigation recommendation."
-            : " Rain expected, adjusting recommendation accordingly."}
-        </p>
       </div>
     </div>
   );

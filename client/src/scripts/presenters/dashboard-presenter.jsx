@@ -1,139 +1,72 @@
 class DashboardPresenter {
   constructor() {
-    this.weatherService = this.initWeatherService();
-    this.aiModel = this.initAIModel();
+    this.apiUrl = "https://airigasi-production.up.railway.app/api";
   }
 
-  initWeatherService() {
-    return {
-      getCurrentWeather: () => ({
-        rainForecast: Math.random() > 0.7 ? "Yes" : "No",
-        rainAmount: (Math.random() * 5).toFixed(1),
-        weatherTemp: (25 + Math.random() * 10).toFixed(1),
-        weatherHumidity: (60 + Math.random() * 30).toFixed(0),
-      }),
-    };
+  async getLatestSensorData(deviceId) {
+    try {
+      const response = await fetch(`${this.apiUrl}/sensors`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const allSensorData = await response.json();
+
+      const deviceData = allSensorData
+        .filter((data) => data.device_id === deviceId)
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      if (deviceData.length > 0) {
+        return deviceData[0];
+      }
+      return { Temperature: 0, Air_Humidity: 0, Soil_Moisture: 0 };
+    } catch (error) {
+      console.error("Failed to fetch latest sensor data:", error);
+      return { Temperature: 0, Air_Humidity: 0, Soil_Moisture: 0 };
+    }
   }
 
-  initAIModel() {
-    return {
-      predict: (sensorData, weatherData) => {
-        const { soilMoisture, temperature, airHumidity } = sensorData;
+  async analyzeIrrigationNeeds(sensorData) {
+    try {
+      const response = await fetch(`${this.apiUrl}/predict`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sensorData),
+      });
 
-        let needsWatering = false;
-        let confidence = 0;
-        let modelConfidence = 90 + Math.random() * 8;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        if (soilMoisture < 300) {
-          needsWatering = true;
-          confidence = 85 + Math.random() * 10;
-        } else if (soilMoisture < 400) {
-          if (temperature > 30 || airHumidity < 50) {
-            needsWatering = true;
-            confidence = 70 + Math.random() * 15;
-          } else {
-            confidence = 75 + Math.random() * 15;
-          }
-        } else if (soilMoisture > 600) {
-          confidence = 90 + Math.random() * 8;
-        } else {
-          confidence = 80 + Math.random() * 15;
-        }
+      const predictionResult = await response.json();
 
-        if (weatherData.rainForecast === "Yes") {
-          needsWatering = false;
-          confidence = Math.min(confidence + 10, 95);
-        }
-
-        return {
-          recommendation: needsWatering
-            ? "WATERING NEEDED"
-            : "NO WATERING NEEDED",
-          confidence: Math.round(confidence * 10) / 10,
-          modelConfidence: Math.round(modelConfidence * 10) / 10,
-        };
-      },
-    };
-  }
-
-  async loadWeatherData() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(this.weatherService.getCurrentWeather());
-      }, 500);
-    });
-  }
-
-  async analyzeIrrigationNeeds(sensorData, weatherData) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const decision = this.aiModel.predict(sensorData, weatherData);
-        resolve(decision);
-      }, 1000);
-    });
-  }
-
-  async getPumpStatus(sensorData) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const { soilMoisture } = sensorData;
-        let status = "OFF";
-
-        if (soilMoisture < 250) {
-          status = "ON";
-        } else if (soilMoisture < 350 && Math.random() > 0.5) {
-          status = "ON";
-        }
-
-        resolve({ status });
-      }, 300);
-    });
+      return {
+        recommendation: predictionResult.message,
+        confidence: predictionResult.result === 0 ? 85 : 95,
+        modelConfidence: 93.0,
+        pumpStatus: predictionResult.result === 0 ? "OFF" : "ON",
+      };
+    } catch (error) {
+      console.error("Analysis request failed:", error);
+      return {
+        recommendation: "Error: Analysis Failed",
+        confidence: 0,
+        modelConfidence: 0,
+        pumpStatus: "OFF",
+      };
+    }
   }
 
   validateSensorData(sensorData) {
     const errors = [];
-
-    if (sensorData.soilMoisture < 0 || sensorData.soilMoisture > 1023) {
+    if (sensorData.Soil_Moisture < 0 || sensorData.Soil_Moisture > 1023) {
       errors.push("Soil moisture must be between 0-1023");
     }
-
-    if (sensorData.temperature < -40 || sensorData.temperature > 80) {
-      errors.push("Temperature must be between -40°C to 80°C");
-    }
-
-    if (sensorData.airHumidity < 0 || sensorData.airHumidity > 100) {
-      errors.push("Air humidity must be between 0-100%");
-    }
-
     return {
       isValid: errors.length === 0,
       errors,
     };
-  }
-
-  getRecommendationColor(recommendation) {
-    return recommendation.includes("NO") ? "orange" : "green";
-  }
-
-  getConfidenceLevel(confidence) {
-    if (confidence >= 90) return "Very High";
-    if (confidence >= 80) return "High";
-    if (confidence >= 70) return "Medium";
-    if (confidence >= 60) return "Low";
-    return "Very Low";
-  }
-
-  formatSensorValue(value, type) {
-    switch (type) {
-      case "temperature":
-        return `${value}.0°C`;
-      case "humidity":
-        return `${value}.0%`;
-      case "moisture":
-        return `${value} units`;
-      default:
-        return value;
-    }
   }
 }
 

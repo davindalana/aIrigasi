@@ -5,91 +5,84 @@ import DashboardTemplate from "../template/dashboard-template";
 const DashboardPage = () => {
   const [state, setState] = useState({
     sensorData: {
-      soilMoisture: 450,
-      temperature: 28,
-      airHumidity: 65,
-    },
-    weatherData: {
-      rainForecast: "No",
-      rainAmount: "0.0",
-      weatherTemp: "26.1",
-      weatherHumidity: "72",
+      Soil_Moisture: 0,
+      Temperature: 0,
+      Air_Humidity: 0,
     },
     aiDecision: {
-      recommendation: "NO WATERING NEEDED",
-      confidence: 83.0,
-      modelConfidence: 93.0,
+      recommendation: "Waiting for analysis...",
+      confidence: 0,
+      modelConfidence: 0,
     },
     pumpStatus: "OFF",
-    isLoading: false,
-    selectedDeviceId: "device1",
+    isLoading: true,
+    selectedDeviceId: "esp8266-AIrigasi-02",
   });
 
   const presenter = new DashboardPresenter();
 
+  const deviceIds = [
+    "esp8266-AIrigasi-01",
+    "esp8266-AIrigasi-02",
+    "esp8266-AIrigasi-03",
+  ];
+
   useEffect(() => {
-    presenter.loadWeatherData(state.selectedDeviceId).then((weather) => {
+    const loadLatestData = async () => {
+      setState((prev) => ({ ...prev, isLoading: true }));
+      const latestData = await presenter.getLatestSensorData(
+        state.selectedDeviceId
+      );
       setState((prev) => ({
         ...prev,
-        weatherData: weather,
+        sensorData: {
+          Soil_Moisture: latestData.Soil_Moisture,
+          Temperature: latestData.Temperature,
+          Air_Humidity: latestData.Air_Humidity,
+        },
+        isLoading: false,
       }));
-    });
-
-    presenter
-      .getPumpStatus(state.sensorData, state.selectedDeviceId)
-      .then((pump) => {
-        setState((prev) => ({
-          ...prev,
-          pumpStatus: pump.status,
-        }));
-      });
-  }, [state.selectedDeviceId]);
-
-  const handleSensorChange = (field, value) => {
-    const newSensorData = {
-      ...state.sensorData,
-      [field]: value,
     };
 
-    setState((prev) => ({
-      ...prev,
-      sensorData: newSensorData,
-    }));
-  };
+    loadLatestData();
+  }, [state.selectedDeviceId]);
 
   const handleAnalyze = async () => {
     setState((prev) => ({ ...prev, isLoading: true }));
 
-    try {
-      const [decision, pump] = await Promise.all([
-        presenter.analyzeIrrigationNeeds(
-          state.sensorData,
-          state.weatherData,
-          state.selectedDeviceId
-        ),
-        presenter.getPumpStatus(state.sensorData, state.selectedDeviceId),
-      ]);
+    const dataToPredict = {
+      ...state.sensorData,
+      device_id: state.selectedDeviceId,
+      timestamp: new Date().toISOString(),
+    };
 
-      setState((prev) => ({
-        ...prev,
-        aiDecision: decision,
-        pumpStatus: pump.status,
-        isLoading: false,
-      }));
-    } catch (error) {
-      console.error("Analysis failed:", error);
-      setState((prev) => ({ ...prev, isLoading: false }));
-    }
+    const decision = await presenter.analyzeIrrigationNeeds(dataToPredict);
+
+    setState((prev) => ({
+      ...prev,
+      aiDecision: {
+        recommendation: decision.recommendation,
+        confidence: decision.confidence,
+        modelConfidence: decision.modelConfidence,
+      },
+      pumpStatus: decision.pumpStatus,
+      isLoading: false,
+    }));
   };
 
   const handleDeviceChange = (deviceId) => {
     setState((prev) => ({
       ...prev,
       selectedDeviceId: deviceId,
+    }));
+  };
+
+  const handleSensorChange = (field, value) => {
+    setState((prev) => ({
+      ...prev,
       sensorData: {
-        soilMoisture: 450,
-        temperature: 28,
-        airHumidity: 65,
+        ...prev.sensorData,
+        [field]: value,
       },
     }));
   };
@@ -97,14 +90,14 @@ const DashboardPage = () => {
   return (
     <DashboardTemplate
       sensorData={state.sensorData}
-      weatherData={state.weatherData}
       aiDecision={state.aiDecision}
       pumpStatus={state.pumpStatus}
       isLoading={state.isLoading}
       selectedDeviceId={state.selectedDeviceId}
-      onSensorChange={handleSensorChange}
+      deviceIds={deviceIds}
       onAnalyze={handleAnalyze}
       onDeviceChange={handleDeviceChange}
+      onSensorChange={handleSensorChange}
     />
   );
 };
