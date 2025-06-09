@@ -11,7 +11,7 @@ const DashboardPage = () => {
     },
     aiDecision: {
       recommendation: "Waiting for analysis...",
-      pumpStatus: "OFF", // Added pumpStatus to the initial state
+      pumpStatus: "OFF",
     },
     weatherData: null,
     isLoading: true,
@@ -45,7 +45,7 @@ const DashboardPage = () => {
           weatherData: weather,
           aiDecision: {
             recommendation: "Waiting for analysis...",
-            pumpStatus: "OFF", // Ensure pump status is reset
+            pumpStatus: "OFF",
           },
           isLoading: false,
         }));
@@ -61,6 +61,26 @@ const DashboardPage = () => {
     loadInitialData();
   }, [state.selectedDeviceId]);
 
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const latestData = await presenter.getLatestSensorData(
+        state.selectedDeviceId
+      );
+      if (latestData) {
+        setState((prev) => ({
+          ...prev,
+          sensorData: {
+            Soil_Moisture: latestData.Soil_Moisture,
+            Temperature: latestData.Temperature,
+            Air_Humidity: latestData.Air_Humidity,
+          },
+        }));
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [state.selectedDeviceId]);
+
   const handleAnalyze = async () => {
     setState((prev) => ({ ...prev, isLoading: true }));
 
@@ -70,14 +90,13 @@ const DashboardPage = () => {
       timestamp: new Date().toISOString(),
     };
 
-    // The presenter now returns an object with recommendation and pumpStatus
     const decision = await presenter.analyzeIrrigationNeeds(dataToPredict);
 
     setState((prev) => ({
       ...prev,
       aiDecision: {
         recommendation: decision.recommendation,
-        pumpStatus: decision.pumpStatus, // Update pumpStatus from the presenter's response
+        pumpStatus: decision.pumpStatus,
       },
       isLoading: false,
     }));
@@ -87,6 +106,10 @@ const DashboardPage = () => {
     setState((prev) => ({
       ...prev,
       selectedDeviceId: deviceId,
+      aiDecision: {
+        recommendation: "Waiting for analysis...",
+        pumpStatus: "OFF",
+      },
     }));
   };
 
