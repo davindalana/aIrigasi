@@ -5,7 +5,7 @@ const axios = require('axios');
 exports.predictIrrigation = async (request, h) => {
   try {
     // Ambil data sensor terbaru
-    const latest = await SensorData.findOne().sort({ timeStamp: -1 });
+    const latest = await SensorData.findOne().sort({ timestamp: -1 });
 
     if (!latest) {
       return h.response({ message: 'No sensor data available' }).code(404);
@@ -16,6 +16,7 @@ exports.predictIrrigation = async (request, h) => {
       Temperature: latest.Temperature,
       Soil_Moisture: latest.Soil_Moisture,
       Air_Humidity: latest.Air_Humidity,
+      device_id: latest.device_id,
     };
 
     console.log(input)
