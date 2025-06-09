@@ -17,6 +17,7 @@ exports.predictIrrigation = async (request, h) => {
       Soil_Moisture: latest.Soil_Moisture,
       Air_Humidity: latest.Air_Humidity,
       device_id: latest.device_id,
+      timestamp: latest.timestamp,
     };
 
     console.log(input)
