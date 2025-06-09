@@ -5,7 +5,10 @@ const sensorDataSchema = new mongoose.Schema({
     Air_Humidity: Number,
     Soil_Moisture: Number,
     device_id: String,
-    timestamp: Date,
+    timestamp: {
+        type: Date,
+        default: Date.now
+    }
 }, { collection: 'sensordata' });
 
 

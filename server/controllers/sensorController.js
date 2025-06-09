@@ -23,30 +23,36 @@ exports.getAllSensorData = async (request, h) => {
 exports.addSensorData = async (request, h) => {
     try {
         console.log('Payload:', request.payload);
-        const { soilMoisture, temperature, airHumidity } = request.payload;
+        const { Soil_Moisture, Temperature, Air_Humidity, device_id } = request.payload;
+        console.log(Soil_Moisture, Temperature, Air_Humidity, device_id);  
 
         if (
-            soilMoisture === undefined || soilMoisture === null ||
-            temperature === undefined || temperature === null ||
-            airHumidity === undefined || airHumidity === null
+            Soil_Moisture === undefined || Soil_Moisture === null ||
+            Temperature === undefined || Temperature === null ||
+            Air_Humidity === undefined || Air_Humidity === null
         ) {
             return h.response({ message: 'Incomplete sensor data' }).code(400);
         }
 
-
         const sensorData = new SensorData({
-            soilMoisture,
-            temperature,
-            airHumidity,
-            timeStamp: new Date(),  
+            Soil_Moisture,
+            Temperature,
+            Air_Humidity,
+            device_id,
+            timeStamp: new Date().getTime,  
         });
 
         await sensorData.save();
 
-        return h.response({ message: 'Sensor data saved', data: sensorData }).code(201);
+        // Destructure the saved document to exclude __v and include timeStamp
+        const { __v, ...dataWithoutV } = sensorData._doc; 
+        
+        return h.response({ message: 'Sensor data saved', data: dataWithoutV }).code(201);
     } catch (error) {
         console.error(error);
         return h.response({ message: 'Failed to save sensor data', error: error.message }).code(500);
     }
 };
+
+
 
