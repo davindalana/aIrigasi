@@ -168,7 +168,7 @@
 
 @media (min-width: 1024px) {
   .sensor-display {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
   }
 }
@@ -291,7 +291,7 @@
   }
 
   .sensor-display {
-    grid-template-columns: repeat(4, 1fr); /* Diubah dari 5 menjadi 4 */
+    grid-template-columns: repeat(3, 1fr); /* Diubah dari 4 menjadi 3 */
   }
 
   .weather-grid {
@@ -302,5 +302,70 @@
 @media (min-width: 1800px) {
   .dashboard {
     max-width: 1800px;
+  }
+}
+
+/* === STYLES FOR PUMP STATUS (ADDED) === */
+
+.ai-decision-card .decision-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: space-between; /* Pushes status to the right on wider screens */
+}
+
+/* Container for the pump status section */
+.pump-status-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f7f9fc;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+}
+
+/* "Pump Status" text label */
+.pump-status-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* The "ON" / "OFF" badge */
+.pump-status-indicator {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.5rem 1.25rem;
+  border-radius: 20px;
+  color: white;
+  min-width: 80px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Style for the "OFF" state (red) */
+.pump-status-off {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+}
+
+/* Style for the "ON" state (green) */
+.pump-status-on {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+}
+
+@media (max-width: 768px) {
+  .ai-decision-card .decision-header {
+    justify-content: center; /* Center content on smaller screens */
+  }
+
+  .pump-status-container {
+    width: 100%;
+    margin-top: 1rem;
   }
 }

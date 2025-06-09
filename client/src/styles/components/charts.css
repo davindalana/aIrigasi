@@ -13,6 +13,12 @@
   font-size: 1.1rem;
 }
 
+.chart-wrapper {
+  position: relative;
+  height: 350px;
+  width: 100%;
+}
+
 .simple-chart {
   display: flex;
   align-items: flex-end;

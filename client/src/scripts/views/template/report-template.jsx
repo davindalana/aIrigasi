@@ -130,14 +130,6 @@ const SummaryTab = ({ data }) => (
           <div className="metric-label">Watering Events</div>
         </div>
       </div>
-
-      <div className="metric-card">
-        <div className="metric-icon">⚡</div>
-        <div className="metric-content">
-          <div className="metric-value">{data.efficiency}%</div>
-          <div className="metric-label">Efficiency</div>
-        </div>
-      </div>
     </div>
 
     <div className="card">

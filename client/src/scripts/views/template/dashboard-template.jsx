@@ -1,3 +1,5 @@
+// src/scripts/views/template/dashboard-template.jsx
+
 import React from "react";
 import "../../../styles/pages/dashboard.css";
 import "../../../styles/components/cards.css";
@@ -8,18 +10,13 @@ import "../../../styles/components/charts.css";
 const DashboardTemplate = ({
   sensorData,
   aiDecision,
-  pumpStatus,
+  weatherData,
   isLoading,
   selectedDeviceId,
   deviceIds,
-  onSensorChange,
   onAnalyze,
   onDeviceChange,
 }) => {
-  const pumpStatusClass = pumpStatus === "ON" ? "pump-on" : "pump-off";
-  const pumpStatusText = pumpStatus === "ON" ? "Pump ON" : "Pump OFF";
-
-  // Fungsi bantuan untuk mendapatkan kelas untuk teks rekomendasi
   const getDecisionClass = (recommendation) => {
     if (!recommendation) return "decision-text-default";
     if (recommendation.includes("Tidak perlu siram")) {
@@ -37,6 +34,19 @@ const DashboardTemplate = ({
     return "decision-text-default";
   };
 
+  const getWeatherIcon = (description) => {
+    if (!description) return "❓";
+    const desc = description.toLowerCase();
+    if (desc.includes("rain")) return "🌧️";
+    if (desc.includes("drizzle")) return "💧";
+    if (desc.includes("clear")) return "☀️";
+    if (desc.includes("clouds")) return "☁️";
+    if (desc.includes("thunderstorm")) return "⛈️";
+    if (desc.includes("snow")) return "❄️";
+    if (desc.includes("mist") || desc.includes("fog")) return "🌫️";
+    return "❓";
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -46,7 +56,7 @@ const DashboardTemplate = ({
 
       <div className="card sensor-input-card">
         <div className="card-header">
-          🆔 <span>Select Device</span>
+          <span>🆔 Select Device</span>
         </div>
         <div className="input-group">
           <label className="input-label">Device ID</label>
@@ -65,53 +75,63 @@ const DashboardTemplate = ({
         </div>
       </div>
 
+      {/* KARTU PRAKIRAAN CUACA (DIPINDAHKAN KE SINI) */}
+      <div className="card weather-card">
+        <div className="card-header">
+          <span>🌦️ Prakiraan Cuaca (3 Jam ke Depan)</span>
+        </div>
+        {weatherData ? (
+          <div className="weather-grid">
+            <div className="weather-item">
+              <span className="weather-label">Kondisi</span>
+              <span className="weather-value">
+                {getWeatherIcon(weatherData.description)}{" "}
+                {weatherData.description}
+              </span>
+            </div>
+            <div className="weather-item">
+              <span className="weather-label">Temperatur</span>
+              <span className="weather-value">
+                {Math.round(weatherData.temp)}°C
+              </span>
+            </div>
+            <div className="weather-item">
+              <span className="weather-label">Kelembapan</span>
+              <span className="weather-value">{weatherData.humidity}%</span>
+            </div>
+            <div className="weather-item">
+              <span className="weather-label">Curah Hujan (3j)</span>
+              <span className="weather-value">{weatherData.rain} mm</span>
+            </div>
+          </div>
+        ) : (
+          <p>Memuat data cuaca...</p>
+        )}
+      </div>
+
       <div className="card sensor-input-card">
         <div className="card-header">
-          📊 <span>Sensor Data (Real-time)</span>
+          <span>📊 Sensor Data (Real-time)</span>
         </div>
 
-        <div className="sensor-inputs">
-          <div className="input-group">
-            <label className="input-label">Soil Moisture (0-1023)</label>
-            <input
-              type="number"
-              className="sensor-input"
-              value={sensorData.Soil_Moisture}
-              onChange={(e) =>
-                onSensorChange("Soil_Moisture", parseInt(e.target.value) || 0)
-              }
-              min="0"
-              max="1023"
-              readOnly
-            />
+        {/* INPUT SENSOR DIUBAH MENJADI SENSOR CARD */}
+        <div className="sensor-display">
+          <div className="sensor-card">
+            <h4>SOIL MOISTURE</h4>
+            <div className="sensor-value">{sensorData.Soil_Moisture}</div>
+            <div className="sensor-unit">units</div>
           </div>
 
-          <div className="input-group">
-            <label className="input-label">Temperature (°C)</label>
-            <input
-              type="number"
-              className="sensor-input"
-              value={sensorData.Temperature}
-              onChange={(e) =>
-                onSensorChange("Temperature", parseInt(e.target.value) || 0)
-              }
-              readOnly
-            />
+          <div className="sensor-card">
+            <h4>TEMPERATURE</h4>
+            <div className="sensor-value">{sensorData.Temperature}</div>
+            <div className="sensor-unit">°C</div>
           </div>
 
-          <div className="input-group">
-            <label className="input-label">Air Humidity (%)</label>
-            <input
-              type="number"
-              className="sensor-input"
-              value={sensorData.Air_Humidity}
-              onChange={(e) =>
-                onSensorChange("Air_Humidity", parseInt(e.target.value) || 0)
-              }
-              min="0"
-              max="100"
-              readOnly
-            />
+          <div className="sensor-card">
+            <h4>AIR HUMIDITY</h4>
+            <div className="sensor-value">{sensorData.Air_Humidity}</div>
+            <div className="sensor-unit">%</div>
           </div>
         </div>
 
@@ -124,6 +144,7 @@ const DashboardTemplate = ({
         </button>
       </div>
 
+      {/* KARTU KEPUTUSAN AI */}
       <div className="card ai-decision-card">
         <div className="decision-header">
           <div className="decision-icon">🧠</div>
@@ -137,38 +158,18 @@ const DashboardTemplate = ({
             </h3>
             <p className="decision-subtitle">AI Decision</p>
           </div>
-          {/* Lencana dan Bilah Confidence Dihapus */}
-        </div>
-      </div>
 
-      <div className="sensor-display">
-        <div className={`sensor-card ${pumpStatusClass}`}>
-          <h4>WATER PUMP</h4>
-          <div className="sensor-value">
-            <span className={`pump-status-dot ${pumpStatusClass}`}></span>{" "}
-            {pumpStatusText}
+          {/* === PUMP STATUS DISPLAY ADDED HERE === */}
+          <div className="pump-status-container">
+            <span className="pump-status-label">Pump Status</span>
+            <span
+              className={`pump-status-indicator pump-status-${aiDecision.pumpStatus?.toLowerCase()}`}
+            >
+              {aiDecision.pumpStatus}
+            </span>
           </div>
-          <div className="sensor-unit">Status</div>
+          {/* ======================================= */}
         </div>
-
-        <div className="sensor-card">
-          <h4>SOIL MOISTURE</h4>
-          <div className="sensor-value">{sensorData.Soil_Moisture}</div>
-          <div className="sensor-unit">units</div>
-        </div>
-
-        <div className="sensor-card">
-          <h4>TEMPERATURE</h4>
-          <div className="sensor-value">{sensorData.Temperature}</div>
-          <div className="sensor-unit">°C</div>
-        </div>
-
-        <div className="sensor-card">
-          <h4>AIR HUMIDITY</h4>
-          <div className="sensor-value">{sensorData.Air_Humidity}</div>
-          <div className="sensor-unit">%</div>
-        </div>
-        {/* Kartu Model Confidence Dihapus */}
       </div>
     </div>
   );

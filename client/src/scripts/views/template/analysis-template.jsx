@@ -68,7 +68,7 @@ const AnalysisTemplate = ({
                 data: historicalData.map((data) => data.soilMoisture),
                 borderColor: "#4caf50",
                 backgroundColor: "rgba(76, 175, 80, 0.2)",
-                tension: 0.3,
+                tension: 0.4,
                 fill: true,
               },
             ],
@@ -82,6 +82,11 @@ const AnalysisTemplate = ({
                 title: {
                   display: true,
                   text: "Moisture Units (0-1023)",
+                },
+                min: 0,
+                max: 1200,
+                ticks: {
+                  stepSize: 200,
                 },
               },
               x: {
@@ -116,7 +121,7 @@ const AnalysisTemplate = ({
                 data: historicalData.map((data) => data.temperature),
                 borderColor: "#ff9800",
                 backgroundColor: "rgba(255, 152, 0, 0.2)",
-                tension: 0.3,
+                tension: 0.4,
                 fill: true,
               },
             ],
@@ -130,6 +135,11 @@ const AnalysisTemplate = ({
                 title: {
                   display: true,
                   text: "Temperature (°C)",
+                },
+                min: 10,
+                max: 40,
+                ticks: {
+                  stepSize: 5,
                 },
               },
               x: {
@@ -164,7 +174,7 @@ const AnalysisTemplate = ({
                 data: historicalData.map((data) => data.humidity),
                 borderColor: "#2196f3",
                 backgroundColor: "rgba(33, 150, 243, 0.2)",
-                tension: 0.3,
+                tension: 0.4,
                 fill: true,
               },
             ],
@@ -213,7 +223,6 @@ const AnalysisTemplate = ({
                 data: historicalData.map((data) => data.recommendationLevel),
                 borderColor: "#9c27b0",
                 backgroundColor: "rgba(156, 39, 176, 0.2)",
-                tension: 0.3,
                 stepped: true,
               },
             ],
@@ -379,18 +388,6 @@ const AnalysisTemplate = ({
               {statisticsData.wateringRecommendations}
             </p>
             <small>Days requiring water</small>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon">🌱</div>
-          <div className="stat-content">
-            <h3>Optimal Range</h3>
-            <p className="stat-number">
-              {statisticsData.optimalMoistureRange.min}-
-              {statisticsData.optimalMoistureRange.max}
-            </p>
-            <small>Moisture level</small>
           </div>
         </div>
       </div>

@@ -10,7 +10,6 @@ const AnalysisPage = () => {
     statisticsData: {
       totalAnalyses: 0,
       wateringRecommendations: 0,
-      optimalMoistureRange: { min: 300, max: 600 },
     },
     selectedTimeRange: "7days",
     selectedDeviceId: "esp8266-AIrigasi-02",

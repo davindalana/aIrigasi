@@ -61,17 +61,12 @@ class SimpleReportPresenter {
   generateSummary(data) {
     const totalAnalyses = data.length;
     const wateringEvents = data.filter((d) => d.Soil_Moisture < 400).length;
-    const efficiency =
-      totalAnalyses > 0
-        ? ((totalAnalyses - wateringEvents) / totalAnalyses) * 100
-        : 100;
     const latestData = data[data.length - 1] || {};
 
     // avgConfidence dan properti confidence dihapus
     return {
       totalAnalyses,
       wateringEvents,
-      efficiency: Math.round(efficiency),
       currentConditions: {
         moisture: latestData.Soil_Moisture || 0,
         temperature: latestData.Temperature || 0,
@@ -143,7 +138,6 @@ class SimpleReportPresenter {
       body: [
         ["Total Analisis", summary.totalAnalyses],
         ["Total Penyiraman", `${summary.wateringEvents} kali`],
-        ["Efisiensi Sistem", `${summary.efficiency}%`],
         ["Analisis Terakhir", `${summary.systemStatus.lastAnalysis}`],
       ],
       styles: { fontSize: 11 },

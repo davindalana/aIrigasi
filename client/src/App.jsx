@@ -1,9 +1,5 @@
 // src/App.jsx
 import React, { useState } from "react";
-import "./styles/App.css";
-import "./styles/pages/dashboard.css";
-import "./styles/pages/analysis.css";
-import "./styles/pages/report.css";
 import "./styles/components/buttons.css";
 import "./styles/components/cards.css";
 import "./styles/components/charts.css";
@@ -12,6 +8,10 @@ import "./styles/components/loading.css";
 import "./styles/components/navigation.css";
 import "./styles/components/tables.css";
 import "./styles/components/timeline.css";
+import "./styles/pages/dashboard.css";
+import "./styles/pages/analysis.css";
+import "./styles/pages/report.css";
+import "./styles/App.css";
 import DashboardPage from "./scripts/views/pages/dashboard-page";
 import AnalysisPage from "./scripts/views/pages/analysis-page";
 import ReportPage from "./scripts/views/pages/report-page";

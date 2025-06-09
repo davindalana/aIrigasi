@@ -9,11 +9,11 @@ const DashboardPage = () => {
       Temperature: 0,
       Air_Humidity: 0,
     },
-    // State aiDecision diperbarui
     aiDecision: {
       recommendation: "Waiting for analysis...",
+      pumpStatus: "OFF", // Added pumpStatus to the initial state
     },
-    pumpStatus: "OFF",
+    weatherData: null,
     isLoading: true,
     selectedDeviceId: "esp8266-AIrigasi-02",
   });
@@ -27,11 +27,13 @@ const DashboardPage = () => {
   ];
 
   useEffect(() => {
-    const loadLatestData = async () => {
+    const loadInitialData = async () => {
       setState((prev) => ({ ...prev, isLoading: true }));
-      const latestData = await presenter.getLatestSensorData(
-        state.selectedDeviceId
-      );
+      const [latestData, weather] = await Promise.all([
+        presenter.getLatestSensorData(state.selectedDeviceId),
+        presenter.getWeatherData(),
+      ]);
+
       if (latestData) {
         setState((prev) => ({
           ...prev,
@@ -40,18 +42,23 @@ const DashboardPage = () => {
             Temperature: latestData.Temperature,
             Air_Humidity: latestData.Air_Humidity,
           },
+          weatherData: weather,
           aiDecision: {
             recommendation: "Waiting for analysis...",
+            pumpStatus: "OFF", // Ensure pump status is reset
           },
-          pumpStatus: "OFF",
           isLoading: false,
         }));
       } else {
-        setState((prev) => ({ ...prev, isLoading: false }));
+        setState((prev) => ({
+          ...prev,
+          isLoading: false,
+          weatherData: weather,
+        }));
       }
     };
 
-    loadLatestData();
+    loadInitialData();
   }, [state.selectedDeviceId]);
 
   const handleAnalyze = async () => {
@@ -63,15 +70,15 @@ const DashboardPage = () => {
       timestamp: new Date().toISOString(),
     };
 
+    // The presenter now returns an object with recommendation and pumpStatus
     const decision = await presenter.analyzeIrrigationNeeds(dataToPredict);
 
-    // Perbarui state dengan keputusan baru, hapus confidence
     setState((prev) => ({
       ...prev,
       aiDecision: {
         recommendation: decision.recommendation,
+        pumpStatus: decision.pumpStatus, // Update pumpStatus from the presenter's response
       },
-      pumpStatus: decision.pumpStatus,
       isLoading: false,
     }));
   };
@@ -97,7 +104,7 @@ const DashboardPage = () => {
     <DashboardTemplate
       sensorData={state.sensorData}
       aiDecision={state.aiDecision}
-      pumpStatus={state.pumpStatus}
+      weatherData={state.weatherData}
       isLoading={state.isLoading}
       selectedDeviceId={state.selectedDeviceId}
       deviceIds={deviceIds}

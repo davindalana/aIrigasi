@@ -1,6 +1,9 @@
 class DashboardPresenter {
   constructor() {
     this.apiUrl = "https://airigasi-production.up.railway.app/api";
+    // URL API Cuaca ditambahkan di sini
+    this.weatherApiUrl =
+      "https://api.openweathermap.org/data/2.5/forecast?q=Malang&appid=1abea4adf5a8e3217023e324e339b83e&units=metric";
   }
 
   async getLatestSensorData(deviceId) {
@@ -41,18 +44,42 @@ class DashboardPresenter {
 
       const predictionResult = await response.json();
 
-      // Objek yang dikembalikan diperbarui, confidence dihapus
       return {
         recommendation: predictionResult.message,
         pumpStatus: predictionResult.result > 0 ? "ON" : "OFF",
       };
     } catch (error) {
       console.error("Analysis request failed:", error);
-      // Objek yang dikembalikan diperbarui, confidence dihapus
       return {
         recommendation: "Error: Analysis Failed",
         pumpStatus: "OFF",
       };
+    }
+  }
+
+  // Fungsi baru untuk mengambil data cuaca
+  async getWeatherData() {
+    try {
+      const response = await fetch(this.weatherApiUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const weatherData = await response.json();
+
+      // Mengambil data prakiraan pertama (3 jam ke depan)
+      const forecast = weatherData.list[0];
+      if (forecast) {
+        return {
+          temp: forecast.main.temp,
+          humidity: forecast.main.humidity,
+          description: forecast.weather[0].description,
+          rain: forecast.rain ? forecast.rain["3h"] : 0, // Mengambil data hujan, jika ada
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error("Failed to fetch weather data:", error);
+      return null;
     }
   }
 }

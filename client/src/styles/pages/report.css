@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .report-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -39,11 +40,19 @@
 
 .date-select {
   padding: 0.75rem 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
   background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid #d1d5db;
+  color: #374151;
   transition: all 0.3s ease;
+  font-weight: 500;
+}
+.date-select:hover {
+  border-color: #9ca3af;
+}
+.date-select option {
+  background: white;
+  color: black;
 }
 
 .savings-item:hover {
@@ -67,6 +76,13 @@
   font-size: 0.9rem;
   color: #666;
   font-weight: 500;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .distribution-grid {

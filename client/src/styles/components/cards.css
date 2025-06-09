@@ -1,3 +1,5 @@
+/* src/styles/components/cards.css */
+
 .card {
   background: white;
   border-radius: 16px;
@@ -205,6 +207,7 @@
 }
 
 .weather-label {
+  display: block; /* Baris yang ditambahkan */
   font-size: clamp(0.8rem, 1.5vw, 0.9rem);
   color: #0277bd;
   margin-bottom: 0.5rem;
@@ -260,6 +263,7 @@
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   display: flex;
+  align-items: center; /* Baris ini ditambahkan */
   gap: 20px;
   transition: all 0.3s ease;
 }

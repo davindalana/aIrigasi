@@ -90,7 +90,6 @@ class AnalysisPresenter {
       return {
         totalAnalyses: 0,
         wateringRecommendations: 0,
-        optimalMoistureRange: { min: 300, max: 600 },
       };
     }
     const wateringRecommendations = historicalData.filter(
@@ -100,7 +99,6 @@ class AnalysisPresenter {
     return {
       totalAnalyses: historicalData.length,
       wateringRecommendations,
-      optimalMoistureRange: { min: 300, max: 600 },
     };
   }
 
