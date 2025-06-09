@@ -21,9 +21,9 @@ scaler = joblib.load(SCALER_PATH)
 FEATURE_NAMES = ['Soil_Moisture', 'Temperature', 'Air_Humidity']
 message_map = {
     0: 'Tidak perlu siram',
-    1: 'Perlu siram level 1',
-    2: 'Perlu siram level 2',
-    3: 'Perlu siram level 3'
+    1: 'Perlu siram Sedikit',
+    2: 'Perlu siram Sedang',
+    3: 'Perlu siram Banyak'
 }
 
 # ──────────────────────────────
