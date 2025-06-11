@@ -1,0 +1,250 @@
+.chart-container {
+  margin-bottom: 30px;
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.chart-placeholder h3 {
+  text-align: center;
+  color: #4a5568;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 350px;
+  width: 100%;
+}
+
+.simple-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 200px;
+  padding: 20px;
+  background: #f7fafc;
+  border-radius: 10px;
+  overflow-x: auto;
+  position: relative;
+  min-width: 300px;
+}
+
+.chart-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 30px;
+  position: relative;
+  height: 100%;
+}
+
+.bar-fill {
+  width: 100%;
+  min-height: 5px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.bar-fill:hover {
+  transform: scaleY(1.02);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.bar-label {
+  font-size: 0.75rem;
+  color: #718096;
+  font-weight: 500;
+  margin-top: 5px;
+  white-space: nowrap;
+}
+
+.bar-value {
+  position: absolute;
+  top: -20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.distribution-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.distribution-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.distribution-chart {
+  margin-top: 1rem;
+}
+
+.condition-bar {
+  flex: 2;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-left: 1rem;
+}
+
+.condition-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+}
+
+.condition-fill.moisture {
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+}
+
+.condition-fill.temperature {
+  background: linear-gradient(90deg, #ff9800, #ff5722);
+}
+
+.condition-fill.humidity {
+  background: linear-gradient(90deg, #2196f3, #03a9f4);
+}
+
+.confidence-bar {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+
+.confidence-fill {
+  height: 100%;
+  transition: width 0.5s ease;
+  border-radius: 4px;
+}
+
+.confidence-bar.orange .confidence-fill {
+  background: linear-gradient(90deg, #ff9800, #f57c00);
+}
+
+.confidence-bar.green .confidence-fill {
+  background: linear-gradient(90deg, #4caf50, #45a049);
+}
+
+.performance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+}
+
+.performance-item {
+  display: flex;
+  justify-content: center;
+}
+
+.performance-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  border: 4px solid #e0e0e0;
+}
+
+.performance-circle.uptime {
+  border-color: #4caf50;
+  background: linear-gradient(135deg, #4caf50, #8bc34a);
+  color: white;
+}
+
+.performance-circle.confidence {
+  border-color: #2196f3;
+  background: linear-gradient(135deg, #2196f3, #03a9f4);
+  color: white;
+}
+
+.performance-circle.efficiency {
+  border-color: #ff9800;
+  background: linear-gradient(135deg, #ff9800, #ff5722);
+  color: white;
+}
+
+.performance-percentage {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.performance-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .distribution-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .condition-bar {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .performance-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+  }
+
+  .performance-circle {
+    width: 100px;
+    height: 100px;
+  }
+
+  .performance-percentage {
+    font-size: 1.2rem;
+  }
+
+  .simple-chart {
+    height: 150px;
+    padding: 10px;
+  }
+
+  .chart-bar {
+    width: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    padding: 0.5rem;
+  }
+}
+
+@media print {
+  .chart-container {
+    background: white !important;
+  }
+}

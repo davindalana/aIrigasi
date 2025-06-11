@@ -1,0 +1,27 @@
+{
+  "name": "airigasi",
+  "version": "1.0.0",
+  "description": "![aIrigasi Logo](link_logo_anda_disini)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "train-model": "cd ml && python train_model.py",
+    "lint": "eslint .",
+    "docker:build": "docker build -t airigasi-backend .",
+    "docker:run": "docker run -p 8000:8000 airigasi-backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davindalana/aIrigasi.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davindalana/aIrigasi/issues"
+  },
+  "homepage": "https://github.com/davindalana/aIrigasi#readme"
+}

@@ -1,0 +1,54 @@
+.App {
+  min-height: 100vh;
+}
+
+.app-bar {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 101;
+}
+
+.app-bar-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+}
+
+.app-icon {
+  font-size: 2rem;
+}
+
+.app-title h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .app-bar-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+}
