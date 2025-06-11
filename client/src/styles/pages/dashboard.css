@@ -7,14 +7,6 @@
   box-sizing: border-box;
 }
 
-@media (min-width: 1024px) {
-  .dashboard {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-}
-
 .dashboard-header {
   text-align: center;
   margin-bottom: 2rem;
@@ -40,18 +32,6 @@
 .sensor-input-card {
   border-left: 4px solid #4caf50;
   margin-bottom: 2rem;
-}
-
-@media (min-width: 1024px) {
-  .sensor-inputs {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .sensor-inputs {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 .analyze-btn {
@@ -92,9 +72,9 @@
 .decision-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .decision-icon {
@@ -114,49 +94,56 @@
 .decision-content {
   flex: 1;
   min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.decision-text {
+.decision-title {
   font-size: clamp(1.2rem, 3vw, 1.5rem);
   font-weight: 700;
-  margin: 0;
+  color: #333;
   text-transform: uppercase;
   letter-spacing: 1px;
+  margin: 0;
 }
 
-.decision-subtitle {
+.decision-status {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.decision-volume-container {
+  margin-top: 0.25rem;
+}
+
+.decision-volume-info {
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
   color: #666;
-  margin: 0.25rem 0 0 0;
-  font-weight: 500;
-  font-size: clamp(0.9rem, 2vw, 1rem);
+  font-weight: 400;
+  margin: 0;
 }
 
-.confidence-badge {
-  display: none;
-}
-
-.confidence-bar {
-  display: none;
-}
-
-.decision-text-default {
+.decision-status-default {
   color: #666;
 }
 
-.decision-text-no-water {
-  color: #ff9800; /* Orange for no water */
+.decision-status-no-water {
+  color: #ff9800;
 }
 
-.decision-text-water-low {
-  color: #2196f3; /* Blue for low amount */
+.decision-status-water-low {
+  color: #2196f3;
 }
 
-.decision-text-water-medium {
-  color: #4caf50; /* Green for medium amount */
+.decision-status-water-medium {
+  color: #4caf50;
 }
 
-.decision-text-water-high {
-  color: #f44336; /* Red for high amount */
+.decision-status-water-high {
+  color: #f44336;
 }
 
 .sensor-display {
@@ -164,19 +151,6 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
-}
-
-@media (min-width: 1024px) {
-  .sensor-display {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .sensor-display {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 .weather-card {
@@ -189,12 +163,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1.5rem;
-}
-
-@media (min-width: 1024px) {
-  .weather-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 .explanation-card {
@@ -221,6 +189,93 @@
   border: 1px solid #e0e0e0;
 }
 
+.action-status-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f7f9fc;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  min-width: 180px;
+}
+
+.action-status-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.action-status-indicator {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.5rem 1.25rem;
+  border-radius: 20px;
+  color: white;
+  min-width: 120px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.action-status-indicator.status-safe {
+  background: linear-gradient(135deg, #4caf50, #45a049);
+}
+
+.action-status-indicator.status-needed {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.action-status-indicator.status-waiting {
+  background: linear-gradient(135deg, #9e9e9e, #757575);
+}
+
+.action-status-indicator.status-error {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+}
+
+@media (min-width: 1800px) {
+  .dashboard {
+    max-width: 1800px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .dashboard {
+    max-width: 1600px;
+  }
+  .sensor-display {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .weather-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .sensor-display {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .weather-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sensor-display {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard {
     padding: 1rem;
@@ -231,11 +286,7 @@
     margin-bottom: 1.5rem;
   }
 
-  .sensor-display {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
+  .sensor-display,
   .weather-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
@@ -244,7 +295,8 @@
   .decision-header {
     flex-direction: column;
     text-align: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    justify-content: center;
   }
 
   .sensor-input-card,
@@ -253,6 +305,11 @@
   .explanation-card {
     padding: 1.5rem;
   }
+
+  .action-status-container {
+    width: 100%;
+    margin-top: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -260,16 +317,9 @@
     padding: 0.5rem;
   }
 
-  .sensor-display {
-    grid-template-columns: 1fr;
-  }
-
+  .sensor-display,
   .weather-grid {
     grid-template-columns: 1fr;
-  }
-
-  .sensor-inputs {
-    gap: 0.5rem;
   }
 
   .sensor-input-card,
@@ -277,95 +327,5 @@
   .weather-card,
   .explanation-card {
     padding: 1rem;
-  }
-}
-
-/* === BAGIAN YANG DIPERBAIKI === */
-@media (min-width: 1400px) {
-  .dashboard {
-    max-width: 1600px;
-  }
-
-  .sensor-inputs {
-    grid-template-columns: repeat(3, 1fr); /* Tetap 3 karena ada 3 input */
-  }
-
-  .sensor-display {
-    grid-template-columns: repeat(3, 1fr); /* Diubah dari 4 menjadi 3 */
-  }
-
-  .weather-grid {
-    grid-template-columns: repeat(4, 1fr); /* Diubah dari 5 menjadi 4 */
-  }
-}
-
-@media (min-width: 1800px) {
-  .dashboard {
-    max-width: 1800px;
-  }
-}
-
-/* === STYLES FOR PUMP STATUS (ADDED) === */
-
-.ai-decision-card .decision-header {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-  justify-content: space-between; /* Pushes status to the right on wider screens */
-}
-
-/* Container for the pump status section */
-.pump-status-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: #f7f9fc;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-}
-
-/* "Pump Status" text label */
-.pump-status-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #555;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* The "ON" / "OFF" badge */
-.pump-status-indicator {
-  font-size: 1rem;
-  font-weight: 700;
-  padding: 0.5rem 1.25rem;
-  border-radius: 20px;
-  color: white;
-  min-width: 80px;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-/* Style for the "OFF" state (red) */
-.pump-status-off {
-  background: linear-gradient(135deg, #f44336, #d32f2f);
-}
-
-/* Style for the "ON" state (green) */
-.pump-status-on {
-  background: linear-gradient(135deg, #4caf50, #45a049);
-}
-
-@media (max-width: 768px) {
-  .ai-decision-card .decision-header {
-    justify-content: center; /* Center content on smaller screens */
-  }
-
-  .pump-status-container {
-    width: 100%;
-    margin-top: 1rem;
   }
 }

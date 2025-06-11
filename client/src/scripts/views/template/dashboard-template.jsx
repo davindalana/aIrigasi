@@ -1,5 +1,3 @@
-// src/scripts/views/template/dashboard-template.jsx
-
 import React from "react";
 import "../../../styles/pages/dashboard.css";
 import "../../../styles/components/cards.css";
@@ -18,21 +16,60 @@ const DashboardTemplate = ({
   onDeviceChange,
 }) => {
   const getDecisionClass = (recommendation) => {
-    if (!recommendation) return "decision-text-default";
-    if (recommendation.includes("Tidak perlu siram")) {
-      return "decision-text-no-water";
+    if (!recommendation) return "decision-status-default";
+    const lowerCaseRec = recommendation.toLowerCase();
+    if (lowerCaseRec.includes("tidak perlu siram")) {
+      return "decision-status-no-water";
     }
-    if (recommendation.includes("Siram Sedikit")) {
-      return "decision-text-water-low";
+    if (lowerCaseRec.includes("siram sedikit")) {
+      return "decision-status-water-low";
     }
-    if (recommendation.includes("Siram Sedang")) {
-      return "decision-text-water-medium";
+    if (lowerCaseRec.includes("siram sedang")) {
+      return "decision-status-water-medium";
     }
-    if (recommendation.includes("Siram Banyak")) {
-      return "decision-text-water-high";
+    if (lowerCaseRec.includes("siram banyak")) {
+      return "decision-status-water-high";
     }
-    return "decision-text-default";
+    return "decision-status-default";
   };
+
+  const getWateringVolume = (recommendation) => {
+    if (!recommendation) return null;
+    const lowerCaseRec = recommendation.toLowerCase();
+    if (lowerCaseRec.includes("siram sedikit")) {
+      return "Rekomendasi Volume: ±200–250 ml";
+    }
+    if (lowerCaseRec.includes("siram sedang")) {
+      return "Rekomendasi Volume: ±400–500 ml";
+    }
+    if (lowerCaseRec.includes("siram banyak")) {
+      return "Rekomendasi Volume: ±600–800 ml";
+    }
+    if (lowerCaseRec.includes("tidak perlu siram")) {
+      return "Tanaman Anda Cukup Air";
+    }
+    return null;
+  };
+
+  const getActionStatus = (recommendation) => {
+    if (!recommendation) {
+      return { text: "Menunggu", class: "status-waiting" };
+    }
+    const lowerCaseRec = recommendation.toLowerCase();
+    if (lowerCaseRec.includes("waiting")) {
+      return { text: "Menunggu", class: "status-waiting" };
+    }
+    if (lowerCaseRec.includes("tidak perlu siram")) {
+      return { text: "Aman", class: "status-safe" };
+    }
+    if (lowerCaseRec.includes("error")) {
+      return { text: "Error", class: "status-error" };
+    }
+    return { text: "Siram Sekarang", class: "status-needed" };
+  };
+
+  const actionStatus = getActionStatus(aiDecision.recommendation);
+  const wateringVolumeText = getWateringVolume(aiDecision.recommendation);
 
   const getWeatherIcon = (description) => {
     if (!description) return "❓";
@@ -75,7 +112,6 @@ const DashboardTemplate = ({
         </div>
       </div>
 
-      {/* KARTU PRAKIRAAN CUACA (DIPINDAHKAN KE SINI) */}
       <div className="card weather-card">
         <div className="card-header">
           <span>🌦️ Prakiraan Cuaca (3 Jam ke Depan)</span>
@@ -113,28 +149,23 @@ const DashboardTemplate = ({
         <div className="card-header">
           <span>📊 Sensor Data (Real-time)</span>
         </div>
-
-        {/* INPUT SENSOR DIUBAH MENJADI SENSOR CARD */}
         <div className="sensor-display">
           <div className="sensor-card">
             <h4>SOIL MOISTURE</h4>
             <div className="sensor-value">{sensorData.Soil_Moisture}</div>
             <div className="sensor-unit">units</div>
           </div>
-
           <div className="sensor-card">
             <h4>TEMPERATURE</h4>
             <div className="sensor-value">{sensorData.Temperature}</div>
             <div className="sensor-unit">°C</div>
           </div>
-
           <div className="sensor-card">
             <h4>AIR HUMIDITY</h4>
             <div className="sensor-value">{sensorData.Air_Humidity}</div>
             <div className="sensor-unit">%</div>
           </div>
         </div>
-
         <button
           className={`analyze-btn ${isLoading ? "loading" : ""}`}
           onClick={onAnalyze}
@@ -144,31 +175,31 @@ const DashboardTemplate = ({
         </button>
       </div>
 
-      {/* KARTU KEPUTUSAN AI */}
       <div className="card ai-decision-card">
         <div className="decision-header">
           <div className="decision-icon">🧠</div>
           <div className="decision-content">
+            <p className="decision-title">AI Decision</p>
             <h3
-              className={`decision-text ${getDecisionClass(
+              className={`decision-status ${getDecisionClass(
                 aiDecision.recommendation
               )}`}
             >
-              {aiDecision.recommendation}
+              {aiDecision.recommendation || "Menunggu Analisis..."}
             </h3>
-            <p className="decision-subtitle">AI Decision</p>
+            {wateringVolumeText && (
+              <div className="decision-volume-container">
+                <p className="decision-volume-info">{wateringVolumeText}</p>
+              </div>
+            )}
           </div>
 
-          {/* === PUMP STATUS DISPLAY ADDED HERE === */}
-          <div className="pump-status-container">
-            <span className="pump-status-label">Pump Status</span>
-            <span
-              className={`pump-status-indicator pump-status-${aiDecision.pumpStatus?.toLowerCase()}`}
-            >
-              {aiDecision.pumpStatus}
+          <div className="action-status-container">
+            <span className="action-status-label">Tindakan Diperlukan</span>
+            <span className={`action-status-indicator ${actionStatus.class}`}>
+              {actionStatus.text}
             </span>
           </div>
-          {/* ======================================= */}
         </div>
       </div>
     </div>

@@ -15,6 +15,7 @@ import "./styles/App.css";
 import DashboardPage from "./scripts/views/pages/dashboard-page";
 import AnalysisPage from "./scripts/views/pages/analysis-page";
 import ReportPage from "./scripts/views/pages/report-page";
+import logoSrc from "./assets/Logo.svg";
 
 function App() {
   const [activeMenu, setActiveMenu] = useState("dashboard");
@@ -38,7 +39,7 @@ function App() {
         <div className="app-bar-content">
           <div className="app-title">
             <img
-              src="Logo.svg"
+              src={logoSrc}
               alt="AIrigasi Logo"
               className="app-icon"
               width="60px"
