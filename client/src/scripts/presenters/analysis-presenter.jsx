@@ -5,7 +5,7 @@ class AnalysisPresenter {
 
   mapApiDataToTemplate(apiData) {
     let recommendation = "Tidak perlu siram";
-    let recommendationLevel = 0; // Untuk grafik
+    let recommendationLevel = 0;
     const moisture = apiData.Soil_Moisture;
 
     if (moisture < 200) {
@@ -25,7 +25,7 @@ class AnalysisPresenter {
       temperature: apiData.Temperature,
       humidity: apiData.Air_Humidity,
       recommendation: recommendation,
-      recommendationLevel: recommendationLevel, // Tambahkan level untuk grafik
+      recommendationLevel: recommendationLevel,
       timestamp: new Date(apiData.timestamp).getTime(),
     };
   }
@@ -93,7 +93,7 @@ class AnalysisPresenter {
       };
     }
     const wateringRecommendations = historicalData.filter(
-      (d) => d.recommendationLevel > 0 // Setiap rekomendasi penyiraman
+      (d) => d.recommendationLevel > 0
     ).length;
 
     return {

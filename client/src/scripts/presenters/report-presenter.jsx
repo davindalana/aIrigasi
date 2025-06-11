@@ -31,17 +31,41 @@ class SimpleReportPresenter {
     }
   }
 
-  async generateReport(dateRange = "7days", deviceId = "device1") {
-    const filteredData = await this.fetchReportData(dateRange, deviceId);
+  async getLatestSensorData(deviceId) {
+    try {
+      const response = await fetch(`${this.apiUrl}/sensors`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const allSensorData = await response.json();
 
-    if (filteredData.length === 0) {
+      const deviceData = allSensorData
+        .filter((data) => data.device_id === deviceId)
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      if (deviceData.length > 0) {
+        return deviceData[0];
+      }
+      return { Temperature: 0, Air_Humidity: 0, Soil_Moisture: 0 };
+    } catch (error) {
+      console.error("Failed to fetch latest sensor data:", error);
+      return { Temperature: 0, Air_Humidity: 0, Soil_Moisture: 0 };
+    }
+  }
+
+  async generateReport(dateRange = "7days", deviceId = "device1") {
+    const [historicalData, latestData] = await Promise.all([
+      this.fetchReportData(dateRange, deviceId),
+      this.getLatestSensorData(deviceId),
+    ]);
+
+    if (historicalData.length === 0) {
       return null;
     }
 
-    // Menghapus 'analytics' dari data yang digenerate
     return {
-      summary: this.generateSummary(filteredData),
-      history: this.generateHistory(filteredData),
+      summary: this.generateSummary(historicalData, latestData),
+      history: this.generateHistory(historicalData),
     };
   }
 
@@ -58,12 +82,18 @@ class SimpleReportPresenter {
     }
   }
 
-  generateSummary(data) {
-    const totalAnalyses = data.length;
-    const wateringEvents = data.filter((d) => d.Soil_Moisture < 400).length;
-    const latestData = data[data.length - 1] || {};
+  generateSummary(historicalData, latestData) {
+    const totalAnalyses = historicalData.length;
+    const wateringEvents = historicalData.filter(
+      (d) => d.Soil_Moisture < 400
+    ).length;
 
-    // avgConfidence dan properti confidence dihapus
+    const lastAnalysisTimestamp =
+      latestData.timestamp ||
+      (historicalData.length > 0
+        ? historicalData[historicalData.length - 1].timestamp
+        : null);
+
     return {
       totalAnalyses,
       wateringEvents,
@@ -74,7 +104,7 @@ class SimpleReportPresenter {
       },
       systemStatus: {
         uptime: 99.5,
-        lastAnalysis: this.formatTimeAgo(latestData.timestamp),
+        lastAnalysis: this.formatTimeAgo(lastAnalysisTimestamp),
       },
     };
   }
@@ -82,7 +112,7 @@ class SimpleReportPresenter {
   generateHistory(data) {
     return {
       recentActivities: data
-        .slice(-15) // Menampilkan lebih banyak riwayat untuk PDF
+        .slice(-15)
         .reverse()
         .map((item) => ({
           type: item.Soil_Moisture < 400 ? "watering" : "analysis",
@@ -90,7 +120,10 @@ class SimpleReportPresenter {
             item.Soil_Moisture < 400
               ? "Watering Completed"
               : "Analysis Completed",
-          time: new Date(item.timestamp).toLocaleString("id-ID"), // Format waktu lebih jelas
+          time: new Date(item.timestamp).toLocaleString("id-ID", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          }),
           description: `Moisture: ${item.Soil_Moisture}, Temp: ${item.Temperature}°C, Hum: ${item.Air_Humidity}%`,
           status: "success",
         })),
@@ -106,7 +139,6 @@ class SimpleReportPresenter {
     const doc = new jsPDF();
     const { summary, history } = reportData;
 
-    // Judul Dokumen
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
     doc.text("Laporan Sistem AIrigasi", 105, 20, { align: "center" });
@@ -121,11 +153,9 @@ class SimpleReportPresenter {
       42
     );
 
-    // Garis Pemisah
     doc.setLineWidth(0.5);
     doc.line(14, 48, 196, 48);
 
-    // Bagian Ringkasan
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.text("Ringkasan Laporan", 14, 60);
@@ -134,17 +164,15 @@ class SimpleReportPresenter {
       startY: 65,
       theme: "grid",
       head: [["Metrik", "Nilai"]],
-      // Body diperbarui untuk menghapus Confidence
       body: [
         ["Total Analisis", summary.totalAnalyses],
         ["Total Penyiraman", `${summary.wateringEvents} kali`],
         ["Analisis Terakhir", `${summary.systemStatus.lastAnalysis}`],
       ],
       styles: { fontSize: 11 },
-      headStyles: { fillColor: [76, 175, 80] }, // Warna hijau
+      headStyles: { fillColor: [76, 175, 80] },
     });
 
-    // Bagian Riwayat Aktivitas
     doc.addPage();
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
@@ -164,10 +192,9 @@ class SimpleReportPresenter {
       body: historyBody,
       theme: "striped",
       styles: { fontSize: 9 },
-      headStyles: { fillColor: [102, 126, 234] }, // Warna ungu
+      headStyles: { fillColor: [102, 126, 234] },
     });
 
-    // Simpan PDF
     const fileName = `Laporan-AIrigasi-${deviceId}-${
       new Date().toISOString().split("T")[0]
     }.pdf`;
