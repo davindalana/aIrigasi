@@ -1,6 +1,6 @@
 # AIrigasi
 
-![AIrigasi Logo]([link_logo_anda_disini](https://drive.google.com/file/d/1Q41hN30iu3nNm0yeuQYBBsKLnoneEiva/view?usp=sharing))
+![AIrigasi Logo](https://drive.google.com/file/d/1Q41hN30iu3nNm0yeuQYBBsKLnoneEiva/view?usp=sharing))
 
 AIrigasi adalah aplikasi web inovatif yang memanfaatkan kekuatan *machine learning* (ML) untuk memberikan prediksi cerdas mengenai kebutuhan penyiraman tanaman. Dengan menganalisis data kondisi tanah secara *real-time* seperti kelembaban, suhu, dan pH, AIrigasi memberdayakan petani dan penghobi tanaman untuk merawat tanaman mereka secara otomatis dan efisien, tanpa memerlukan perangkat keras tambahan yang rumit.
 
