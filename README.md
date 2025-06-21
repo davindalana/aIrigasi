@@ -145,13 +145,8 @@ Ikuti langkah-langkah di bawah ini untuk menyiapkan AIrigasi di lingkungan penge
 
 **ID Tim:** CC25-CF032
 **Anggota Tim:**
-**(ML)** MC006D5Y1351 - Ananta Boemi Adji - Universitas Brawijaya
-**(ML)** MC006D5Y1193 - Rakha Apta Pradhana D R - Universitas Brawijaya
-**(ML)** MC006D5Y2187 - Daffa Aprilian Herdikaputra - Universitas Brawijaya
-**(FEBE)** FC006D5Y1473 - Davin Dalana Fidelio Fredra - Universitas Brawijaya
-**(FEBE)** FC006D5Y1244 - Qyan Rommy Mario - Universitas Brawijaya
-
-## 📧 Kontak
-
-Jika Anda memiliki pertanyaan, saran, atau umpan balik, jangan ragu untuk menghubungi kami melalui email: [email@example.com](mailto:email@example.com).
-Terima kasih telah menggunakan **AIrigasi**! Kami berharap aplikasi ini dapat membantu Anda merawat tanaman dengan lebih cerdas dan efisien. Selamat berkebun! 🪴
+1. **(ML)** MC006D5Y1351 - Ananta Boemi Adji - Universitas Brawijaya
+2. **(ML)** MC006D5Y1193 - Rakha Apta Pradhana D R - Universitas Brawijaya
+3. **(ML)** MC006D5Y2187 - Daffa Aprilian Herdikaputra - Universitas Brawijaya
+4. **(FEBE)** FC006D5Y1473 - Davin Dalana Fidelio Fredra - Universitas Brawijaya
+5. **(FEBE)** FC006D5Y1244 - Qyan Rommy Mario - Universitas Brawijaya
